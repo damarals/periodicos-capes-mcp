@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/mcp-periodicos-capes.svg)](https://badge.fury.io/js/mcp-periodicos-capes)
 
-MCP server para consulta de periódicos científicos do Portal de Periódicos CAPES. Permite buscar artigos acadêmicos diretamente no Claude Code/Desktop.
+MCP server para consulta de periódicos científicos do Portal de Periódicos CAPES.
 
 ## 🚀 Instalação Rápida
 
@@ -10,7 +10,7 @@ MCP server para consulta de periódicos científicos do Portal de Periódicos CA
 # Instalar globalmente via NPM
 npm install -g mcp-periodicos-capes
 
-# Configurar no Claude Code
+# Exemplo de configuração no Claude Code
 claude mcp add capes mcp-capes
 ```
 
@@ -66,31 +66,6 @@ Obtém detalhes completos de um artigo específico pelo ID.
 }
 ```
 
-## ⚙️ Configuração Manual
-
-### Claude Code
-```bash
-claude mcp add capes mcp-capes
-```
-
-### Claude Desktop
-
-Adicione ao arquivo de configuração:
-
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`  
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`  
-**Linux:** `~/.config/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "capes": {
-      "command": "mcp-capes"
-    }
-  }
-}
-```
-
 ## 🛠️ Desenvolvimento
 
 ```bash
@@ -117,16 +92,6 @@ npm start
 - 🎯 **Controle fino**: timeout, workers, número de resultados
 - 🚀 **Fácil instalação** via NPM
 
-## 📝 Exemplo de Uso no Claude
-
-```
-Busque 5 artigos sobre "quantum computing" no portal CAPES
-```
-
-```
-Encontre artigos sobre "machine learning healthcare" com detalhes completos, limitando a 3 resultados
-```
-
 ## 🤝 Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para:
@@ -138,7 +103,3 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 ## 📄 Licença
 
 MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 🙏 Baseado no Projeto
-
-Este MCP server foi inspirado e baseado no projeto [Wizard](https://github.com/damarals/wizard) para extração de metadados do Portal CAPES.
