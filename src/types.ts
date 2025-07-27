@@ -1,3 +1,7 @@
+// Constants for CAPES portal options
+export const DOCUMENT_TYPES = ['Artigo', 'Capítulo de livro', 'Carta', 'Errata', 'Revisão'] as const;
+export const LANGUAGES = ['Inglês', 'Português', 'Espanhol', 'Francês', 'Alemão', 'Italiano'] as const;
+
 export interface Article {
   title: string;
   authors: string[];
@@ -12,7 +16,6 @@ export interface Article {
   issue?: string;
   language?: string;
   publisher?: string;
-  topics: string[];
   detail_url?: string;
   is_open_access: boolean;
   is_peer_reviewed: boolean;
@@ -26,6 +29,13 @@ export interface SearchOptions {
   max_workers?: number;
   timeout?: number;
   advanced?: boolean;
+  // Search filters
+  document_types?: string[];
+  open_access_only?: boolean;
+  peer_reviewed_only?: boolean;
+  year_min?: number;
+  year_max?: number;
+  languages?: string[];
 }
 
 export interface BasicArticleInfo {
@@ -36,6 +46,9 @@ export interface BasicArticleInfo {
   search_term: string;
   journal?: string;
   publisher?: string;
+  authors?: string[];
+  is_open_access?: boolean;
+  is_peer_reviewed?: boolean;
 }
 
 export interface SearchResult {
@@ -43,4 +56,19 @@ export interface SearchResult {
   total_found: number;
   pages_processed: number;
   query: string;
+}
+
+export interface SearchPreviewResult {
+  query: string;
+  total_found: number;
+  estimated_time_seconds: number;
+  search_url: string;
+  filters_applied: {
+    document_types?: string[];
+    open_access_only?: boolean;
+    peer_reviewed_only?: boolean;
+    year_min?: number;
+    year_max?: number;
+    languages?: string[];
+  };
 }

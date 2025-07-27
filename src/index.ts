@@ -9,7 +9,7 @@ import {
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
 import { CAPESScraper } from './scraper.js';
-import { SearchOptions } from './types.js';
+import { SearchOptions, DOCUMENT_TYPES, LANGUAGES } from './types.js';
 
 class CAPESMCPServer {
   private server: Server;
@@ -79,6 +79,103 @@ class CAPESMCPServer {
                   description: 'Use advanced search syntax (default: true)',
                   default: true,
                 },
+                document_types: {
+                  type: 'array',
+                  description: 'Filter by document types',
+                  items: {
+                    type: 'string',
+                    enum: DOCUMENT_TYPES
+                  }
+                },
+                open_access_only: {
+                  type: 'boolean',
+                  description: 'Filter by open access (true = only open access, false = only non-open access, undefined = all)'
+                },
+                peer_reviewed_only: {
+                  type: 'boolean',
+                  description: 'Filter by peer review status (true = only peer reviewed, false = only non-peer reviewed, undefined = all)'
+                },
+                year_min: {
+                  type: 'number',
+                  description: 'Minimum publication year',
+                  minimum: 1800,
+                  maximum: 2030
+                },
+                year_max: {
+                  type: 'number',
+                  description: 'Maximum publication year',
+                  minimum: 1800,
+                  maximum: 2030
+                },
+                languages: {
+                  type: 'array',
+                  description: 'Filter by languages',
+                  items: {
+                    type: 'string',
+                    enum: LANGUAGES
+                  }
+                },
+              },
+              required: ['query'],
+            },
+          },
+          {
+            name: 'search_preview_capes',
+            description: 'Get a quick preview of search results without downloading articles (for testing queries)',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                query: {
+                  type: 'string',
+                  description: 'Search query string',
+                },
+                timeout: {
+                  type: 'number',
+                  description: 'Request timeout in milliseconds (default: 30000)',
+                  minimum: 5000,
+                  default: 30000,
+                },
+                advanced: {
+                  type: 'boolean',
+                  description: 'Use advanced search syntax (default: true)',
+                  default: true,
+                },
+                document_types: {
+                  type: 'array',
+                  description: 'Filter by document types',
+                  items: {
+                    type: 'string',
+                    enum: DOCUMENT_TYPES
+                  }
+                },
+                open_access_only: {
+                  type: 'boolean',
+                  description: 'Filter by open access (true = only open access, false = only non-open access, undefined = all)'
+                },
+                peer_reviewed_only: {
+                  type: 'boolean',
+                  description: 'Filter by peer review status (true = only peer reviewed, false = only non-peer reviewed, undefined = all)'
+                },
+                year_min: {
+                  type: 'number',
+                  description: 'Minimum publication year',
+                  minimum: 1800,
+                  maximum: 2030
+                },
+                year_max: {
+                  type: 'number',
+                  description: 'Maximum publication year',
+                  minimum: 1800,
+                  maximum: 2030
+                },
+                languages: {
+                  type: 'array',
+                  description: 'Filter by languages',
+                  items: {
+                    type: 'string',
+                    enum: LANGUAGES
+                  }
+                },
               },
               required: ['query'],
             },
@@ -123,8 +220,15 @@ class CAPESMCPServer {
             full_details: (args.full_details as boolean) || false,
             max_workers: (args.max_workers as number) || 5,
             timeout: (args.timeout as number) || 30000,
-            advanced: (args.advanced as boolean) !== false, // default true
+            advanced: (args.advanced as boolean) !== false,
+            document_types: args.document_types as string[] | undefined,
+            open_access_only: args.open_access_only as boolean | undefined,
+            peer_reviewed_only: args.peer_reviewed_only as boolean | undefined,
+            year_min: args.year_min as number | undefined,
+            year_max: args.year_max as number | undefined,
+            languages: args.languages as string[] | undefined,
           };
+          
 
           if (!options.query || typeof options.query !== 'string') {
             throw new McpError(
@@ -134,6 +238,42 @@ class CAPESMCPServer {
           }
 
           const result = await this.scraper.search(options);
+
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        if (name === 'search_preview_capes') {
+          if (!args) {
+            throw new McpError(ErrorCode.InvalidParams, 'Arguments are required');
+          }
+
+          const options: SearchOptions = {
+            query: args.query as string,
+            timeout: (args.timeout as number) || 30000,
+            advanced: (args.advanced as boolean) !== false,
+            document_types: args.document_types as string[] | undefined,
+            open_access_only: args.open_access_only as boolean | undefined,
+            peer_reviewed_only: args.peer_reviewed_only as boolean | undefined,
+            year_min: args.year_min as number | undefined,
+            year_max: args.year_max as number | undefined,
+            languages: args.languages as string[] | undefined,
+          };
+
+          if (!options.query || typeof options.query !== 'string') {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              'Query parameter is required and must be a string'
+            );
+          }
+
+          const result = await this.scraper.searchPreview(options);
 
           return {
             content: [

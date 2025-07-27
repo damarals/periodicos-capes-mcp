@@ -1,9 +1,15 @@
 import * as cheerio from 'cheerio';
-import { Article, BasicArticleInfo, SearchOptions, SearchResult } from './types.js';
+import { Article, BasicArticleInfo, SearchOptions, SearchResult, SearchPreviewResult } from './types.js';
 
 export class CAPESScraper {
   private static readonly BASE_URL = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html';
   private static readonly DETAIL_URL_PATTERN = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id={}';
+  
+  private static readonly USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
+  private static readonly DEFAULT_HEADERS = {
+    'User-Agent': CAPESScraper.USER_AGENT,
+    'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
+  };
 
   private readonly defaultTimeout: number;
   private readonly defaultMaxWorkers: number;
@@ -13,12 +19,56 @@ export class CAPESScraper {
     this.defaultMaxWorkers = maxWorkers;
   }
 
-  private constructSearchUrl(searchTerm: string, advanced: boolean = true, page: number = 1): string {
-    const encodedTerm = encodeURIComponent(
-      advanced ? `all:contains(${searchTerm})` : searchTerm
-    );
-    const mode = advanced ? '&mode=advanced' : '';
-    return `${CAPESScraper.BASE_URL}?q=${encodedTerm}${mode}&source=all&page=${page}`;
+  private constructSearchUrl(searchTerm: string, options: SearchOptions, page: number = 1): string {
+    // Encode search term with parentheses and spaces as expected by portal
+    const searchQuery = options.advanced ? `all:contains(${searchTerm})` : searchTerm;
+    const encodedTerm = encodeURIComponent(searchQuery).replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/%20/g, '+');
+    
+    let url = `${CAPESScraper.BASE_URL}?q=${encodedTerm}`;
+    
+    // Source (always use all)
+    url += '&source=all';
+    
+    if (options.advanced) {
+      url += '&mode=advanced';
+    }
+    
+    if (page > 1) {
+      url += `&page=${page}`;
+    }
+    if (options.document_types && options.document_types.length > 0) {
+      options.document_types.forEach(type => {
+        const encodedType = encodeURIComponent(type).replace(/%20/g, '+');
+        url += `&type%5B%5D=type%3D%3D${encodedType}`;
+      });
+    }
+    
+    if (options.open_access_only === true) {
+      url += '&open_access%5B%5D=open_access%3D%3D1';
+    } else if (options.open_access_only === false) {
+      url += '&open_access%5B%5D=open_access%3D%3D0';
+    }
+    
+    if (options.peer_reviewed_only === true) {
+      url += '&peer_reviewed%5B%5D=peer_reviewed%3D%3D1';
+    } else if (options.peer_reviewed_only === false) {
+      url += '&peer_reviewed%5B%5D=peer_reviewed%3D%3D0';
+    }
+    
+    if (options.year_min) {
+      url += `&publishyear_min%5B%5D=${options.year_min}`;
+    }
+    if (options.year_max) {
+      url += `&publishyear_max%5B%5D=${options.year_max}`;
+    }
+    if (options.languages && options.languages.length > 0) {
+      options.languages.forEach(lang => {
+        const encodedLang = encodeURIComponent(lang).replace(/%20/g, '+');
+        url += `&language%5B%5D=language%3D%3D${encodedLang}`;
+      });
+    }
+    
+    return url;
   }
 
   private extractDoi(url: string): string | undefined {
@@ -38,7 +88,7 @@ export class CAPESScraper {
       const totalSpan = $('div.pagination-information span.total');
       if (totalSpan.length && totalSpan.text().trim()) {
         const totalItems = parseInt(totalSpan.text().trim());
-        const perPage = 30; // Default items per page
+        const perPage = 30; // CAPES default items per page
         return Math.ceil(totalItems / perPage);
       }
       return 0;
@@ -50,17 +100,14 @@ export class CAPESScraper {
 
   private extractBasicArticleInfo($: cheerio.CheerioAPI, theme: string, searchTerm: string): BasicArticleInfo[] {
     const listings: BasicArticleInfo[] = [];
-    const articleSections = $('#resultados .result-busca');
+    const articleSections = $('.result-busca');
 
     articleSections.each((_, section) => {
       try {
         const $section = $(section);
         
-        // Extract title
         const titleElem = $section.find('.titulo-busca');
         const title = titleElem.text().trim() || 'No title found';
-
-        // Get article ID and detail URL
         let articleId: string | undefined;
         let detailUrl: string | undefined;
         
@@ -72,7 +119,6 @@ export class CAPESScraper {
           articleId = this.extractArticleIdFromUrl(detailUrl);
         }
 
-        // Extract publisher and journal from text-down-01 paragraph
         let publisher: string | undefined;
         let journal: string | undefined;
         
@@ -89,9 +135,24 @@ export class CAPESScraper {
                 publisher = publisherPart?.trim();
               }
             }
-            return false; // break
+            return false; // Stop at first match
           }
         });
+
+        const authors: string[] = [];
+        $section.find('a.view-autor').each((_, authorLink) => {
+          const authorName = $(authorLink).text().trim();
+          if (authorName && !authors.includes(authorName)) {
+            authors.push(authorName);
+          }
+        });
+
+        const isOpenAccess = $section.find('.text-green-cool-vivid-50, .open-access, [title*="open access"], [alt*="open access"]').length > 0 ||
+                            $section.text().toLowerCase().includes('open access');
+
+        const isPeerReviewed = $section.find('.text-violet-50, .peer-reviewed, [title*="peer"], [alt*="peer"]').length > 0 ||
+                              $section.text().toLowerCase().includes('peer') ||
+                              $section.text().toLowerCase().includes('reviewed');
 
         if (title && articleId) {
           listings.push({
@@ -102,6 +163,9 @@ export class CAPESScraper {
             search_term: searchTerm,
             journal,
             publisher,
+            authors,
+            is_open_access: isOpenAccess,
+            is_peer_reviewed: isPeerReviewed,
           });
         }
       } catch (error) {
@@ -121,10 +185,7 @@ export class CAPESScraper {
 
       const response = await fetch(detailUrl, {
         signal: controller.signal,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
-        },
+        headers: CAPESScraper.DEFAULT_HEADERS,
       });
 
       clearTimeout(timeoutId);
@@ -140,24 +201,24 @@ export class CAPESScraper {
         detail_url: detailUrl,
       };
 
-      // Extract abstract
       const abstractElem = $('#item-resumo');
       if (abstractElem.length) {
         metadata.abstract = abstractElem.text().trim();
       }
-
-      // Extract ISSN
-      $('*').each((_, elem) => {
-        const text = $(elem).text();
-        if (/ISSN/i.test(text)) {
-          const nextSibling = $(elem).next();
-          if (nextSibling.length) {
-            metadata.issn = nextSibling.text().trim();
-          }
+      // Look for ISSN in specific patterns
+      const issnStrong = $('strong:contains("ISSN")').first();
+      if (issnStrong.length) {
+        const nextP = issnStrong.next('p');
+        if (nextP.length) {
+          metadata.issn = nextP.text().trim();
         }
-      });
+      }
 
-      // Extract publication date (year)
+      const publisherElem = $('#item-instituicao');
+      if (publisherElem.length) {
+        metadata.publisher = publisherElem.text().replace(/;$/, '').trim();
+      }
+
       const yearElem = $('#item-ano');
       if (yearElem.length) {
         const yearMatch = yearElem.text().match(/(\d{4})/);
@@ -166,7 +227,6 @@ export class CAPESScraper {
         }
       }
 
-      // Extract volume, issue, language
       const pubInfo = $('p.small.text-muted');
       if (pubInfo.length) {
         const text = pubInfo.text();
@@ -187,25 +247,11 @@ export class CAPESScraper {
         }
       }
 
-      // Extract topics
-      $('*').each((_, elem) => {
-        const text = $(elem).text();
-        if (/Tópico\(s\)/i.test(text)) {
-          const nextSibling = $(elem).next();
-          if (nextSibling.length) {
-            const topicsText = nextSibling.text().trim();
-            metadata.topics = topicsText.split(',').map(topic => topic.trim());
-          }
-        }
-      });
 
-      // Check if open access
       metadata.is_open_access = $('.text-green-cool-vivid-50').length > 0;
 
-      // Check if peer-reviewed
       metadata.is_peer_reviewed = $('.text-violet-50').length > 0;
 
-      // Extract authors
       const authors: string[] = [];
       $('.view-autor').each((_, elem) => {
         const authorText = $(elem).text().trim();
@@ -217,14 +263,13 @@ export class CAPESScraper {
         metadata.authors = authors;
       }
 
-      // Extract DOI from links
       $('a[href^="http"]').each((_, elem) => {
         const href = $(elem).attr('href');
         if (href) {
           const doi = this.extractDoi(href);
           if (doi) {
             metadata.doi = doi;
-            return false; // break
+            return false; // Stop at first match
           }
         }
       });
@@ -242,7 +287,7 @@ export class CAPESScraper {
     options: SearchOptions
   ): Promise<BasicArticleInfo[]> {
     const listings: BasicArticleInfo[] = [];
-    const url = this.constructSearchUrl(searchTerm, options.advanced, 1);
+    const url = this.constructSearchUrl(searchTerm, options, 1);
 
     try {
       const controller = new AbortController();
@@ -250,10 +295,7 @@ export class CAPESScraper {
 
       const response = await fetch(url, {
         signal: controller.signal,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
-        },
+        headers: CAPESScraper.DEFAULT_HEADERS,
       });
 
       clearTimeout(timeoutId);
@@ -307,16 +349,13 @@ export class CAPESScraper {
     options: SearchOptions
   ): Promise<BasicArticleInfo[]> {
     try {
-      const pageUrl = this.constructSearchUrl(searchTerm, options.advanced, page);
+      const pageUrl = this.constructSearchUrl(searchTerm, options, page);
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.defaultTimeout);
 
       const response = await fetch(pageUrl, {
         signal: controller.signal,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
-        },
+        headers: CAPESScraper.DEFAULT_HEADERS,
       });
 
       clearTimeout(timeoutId);
@@ -359,7 +398,6 @@ export class CAPESScraper {
           detail_url: listing.detail_url,
           journal: listing.journal,
           publisher: listing.publisher,
-          topics: details.topics || [],
           is_open_access: details.is_open_access || false,
           is_peer_reviewed: details.is_peer_reviewed || false,
           ...details,
@@ -392,7 +430,7 @@ export class CAPESScraper {
     // Phase 1: Get all article listings
     const articleListings = await this.getListingsForTerm(
       options.query, 
-      options.query, // Use query as theme for simplicity
+      options.query, // Use query as theme for consistency
       options
     );
 
@@ -408,15 +446,14 @@ export class CAPESScraper {
       // Convert basic listings to Article objects without detailed metadata
       articles = articleListings.map(listing => ({
         title: listing.title,
-        authors: [],
+        authors: listing.authors || [],
         search_term: listing.theme,
         article_id: listing.article_id,
         detail_url: listing.detail_url,
         journal: listing.journal,
         publisher: listing.publisher,
-        topics: [],
-        is_open_access: false,
-        is_peer_reviewed: false,
+        is_open_access: listing.is_open_access || false,
+        is_peer_reviewed: listing.is_peer_reviewed || false,
       }));
     }
 
@@ -434,5 +471,59 @@ export class CAPESScraper {
       pages_processed: options.max_pages || 0,
       query: options.query,
     };
+  }
+
+  async searchPreview(options: SearchOptions): Promise<SearchPreviewResult> {
+    console.log(`Getting search preview for: ${options.query}`);
+    
+    const url = this.constructSearchUrl(options.query, options, 1);
+    
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.defaultTimeout);
+
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: CAPESScraper.DEFAULT_HEADERS,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const html = await response.text();
+      const $ = cheerio.load(html);
+
+      // Get total pages and items
+      const totalPages = this.getTotalPages($);
+      const totalSpan = $('div.pagination-information span.total');
+      const totalFound = totalSpan.length ? parseInt(totalSpan.text().trim()) : 0;
+
+      // Estimate time based on total pages (assuming ~2 seconds per page with current workers)
+      const maxWorkers = options.max_workers || this.defaultMaxWorkers;
+      const estimatedTimeSeconds = Math.ceil((totalPages * 2) / maxWorkers);
+
+      console.log(`Preview: Found ${totalFound} articles across ${totalPages} pages`);
+
+      return {
+        query: options.query,
+        total_found: totalFound,
+        estimated_time_seconds: estimatedTimeSeconds,
+        search_url: url,
+        filters_applied: {
+          document_types: options.document_types,
+          open_access_only: options.open_access_only,
+          peer_reviewed_only: options.peer_reviewed_only,
+          year_min: options.year_min,
+          year_max: options.year_max,
+          languages: options.languages,
+        },
+      };
+    } catch (error) {
+      console.error(`Error getting search preview:`, error);
+      throw error;
+    }
   }
 }
