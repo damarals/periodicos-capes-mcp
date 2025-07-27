@@ -1,10 +1,22 @@
-# MCP Server - Periódicos CAPES
+<div align="center">
+<h1>MCP Server - Periódicos CAPES</h1>
+    <img src="https://img.shields.io/npm/v/mcp-periodicos-capes" alt="NPM Version" />
+    <img src="https://img.shields.io/github/last-commit/damarals/mcp-periodicos-capes/main?path=README.md&label=%C3%BAltima%20atualiza%C3%A7%C3%A3o&color=blue" alt="Latest Update" >
+</div>
+<br />
+<div align="center"><strong>Servidor MCP para Consulta de Periódicos Científicos</strong></div>
+<div align="center">Uma ferramenta para buscar e analisar artigos científicos do Portal de Periódicos CAPES<br/> através do protocolo Model Context Protocol (MCP).</div>
+<br />
+<div align="center">
+  <sub>Desenvolvido por <a href="https://github.com/damarals">Daniel Amaral</a> 👨‍💻</sub>
+</div>
+<br />
 
-![NPM Version](https://img.shields.io/npm/v/mcp-periodicos-capes)
+## Introdução
 
-MCP server para consulta de periódicos científicos do Portal de Periódicos CAPES.
+O MCP Server - Periódicos CAPES é uma aplicação que implementa o protocolo Model Context Protocol para permitir que modelos de linguagem consultem diretamente o Portal de Periódicos CAPES. Oferece busca paralela, metadados completos e diferentes modos de operação para otimizar performance e detalhamento conforme necessário.
 
-## 🚀 Instalação Rápida
+## Instalação Rápida
 
 ```bash
 # Instalar globalmente via NPM
@@ -14,13 +26,13 @@ npm install -g mcp-periodicos-capes
 claude mcp add capes mcp-capes
 ```
 
-## 📖 Uso
+## Como Usar
 
-O servidor fornece duas ferramentas principais:
+O servidor fornece três ferramentas principais:
 
-### 🔍 search_capes
+### search_capes
 
-Busca artigos no Portal de Periódicos CAPES.
+Busca artigos no Portal de Periódicos CAPES com opções avançadas de filtragem.
 
 **Parâmetros:**
 - `query` (obrigatório): String de busca
@@ -30,6 +42,12 @@ Busca artigos no Portal de Periódicos CAPES.
 - `max_workers` (opcional): Número máximo de workers paralelos (default: 5)
 - `timeout` (opcional): Timeout em milissegundos (default: 30000)
 - `advanced` (opcional): Usar sintaxe avançada (default: true)
+- `document_types` (opcional): Filtrar por tipos de documento ('Artigo', 'Capítulo de livro', 'Carta', 'Errata', 'Revisão')
+- `open_access_only` (opcional): Filtrar por acesso aberto (true/false/undefined)
+- `peer_reviewed_only` (opcional): Filtrar por revisão por pares (true/false/undefined)
+- `year_min` (opcional): Ano mínimo de publicação (1800-2030)
+- `year_max` (opcional): Ano máximo de publicação (1800-2030)
+- `languages` (opcional): Filtrar por idiomas ('Inglês', 'Português', 'Espanhol', 'Francês', 'Alemão', 'Italiano')
 
 **Exemplos:**
 
@@ -41,17 +59,45 @@ Busca rápida:
 }
 ```
 
-Busca completa:
+Busca completa com filtros:
 ```json
 {
   "query": "artificial intelligence healthcare",
   "max_pages": 2,
   "full_details": true,
-  "max_results": 5
+  "max_results": 5,
+  "document_types": ["Artigo"],
+  "open_access_only": true,
+  "year_min": 2020,
+  "languages": ["Inglês", "Português"]
 }
 ```
 
-### 📄 get_article_details
+### search_preview_capes
+
+Obtém uma prévia dos resultados de busca sem baixar os artigos (ideal para testar queries).
+
+**Parâmetros:**
+- `query` (obrigatório): String de busca
+- `timeout` (opcional): Timeout em milissegundos (default: 30000)
+- `advanced` (opcional): Usar sintaxe avançada (default: true)
+- `document_types` (opcional): Filtrar por tipos de documento
+- `open_access_only` (opcional): Filtrar por acesso aberto
+- `peer_reviewed_only` (opcional): Filtrar por revisão por pares
+- `year_min` (opcional): Ano mínimo de publicação
+- `year_max` (opcional): Ano máximo de publicação
+- `languages` (opcional): Filtrar por idiomas
+
+**Exemplo:**
+```json
+{
+  "query": "machine learning",
+  "document_types": ["Artigo"],
+  "year_min": 2020
+}
+```
+
+### get_article_details
 
 Obtém detalhes completos de um artigo específico pelo ID.
 
@@ -66,7 +112,7 @@ Obtém detalhes completos de um artigo específico pelo ID.
 }
 ```
 
-## 🛠️ Desenvolvimento
+## Desenvolvimento
 
 ```bash
 # Clonar repositório
@@ -83,23 +129,23 @@ npm run build
 npm start
 ```
 
-## ✨ Recursos
+## Características
 
-- 🔄 **Busca paralela** para melhor performance
-- 📊 **Metadados completos**: título, autores, DOI, abstract, ISSN, etc.
-- 🔍 **Busca avançada** com sintaxe especializada
-- ⚡ **Modo rápido** (só info básica) vs **completo** (todos os detalhes)
-- 🎯 **Controle fino**: timeout, workers, número de resultados
-- 🚀 **Fácil instalação** via NPM
+- Consulta automatizada de artigos científicos no Portal de Periódicos CAPES
+- Busca paralela para melhor performance com controle de workers
+- Sistema de busca com sintaxe avançada ou simples
+- Preview de busca para testar queries rapidamente sem baixar dados
+- Filtros avançados: tipo de documento, acesso aberto, revisão por pares, ano, idioma
+- Extração de metadados completos: título, autores, DOI, abstract, ISSN, etc.
+- Modo rápido (informações básicas) vs modo completo (detalhes extensos)
+- Controle fino de parâmetros: timeout, número de resultados, páginas
+- Integração nativa com o protocolo MCP para modelos de linguagem
+- Fácil instalação e configuração via NPM
 
-## 🤝 Contribuição
+## Contribuindo
 
-Contribuições são bem-vindas! Sinta-se à vontade para:
+Contribuições são sempre bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests. Se encontrar algum problema ou quiser sugerir uma melhoria, não hesite em contribuir.
 
-- Reportar bugs
-- Sugerir melhorias
-- Enviar pull requests
+## Licença
 
-## 📄 Licença
-
-MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
