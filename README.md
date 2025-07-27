@@ -1,6 +1,6 @@
 # MCP Server - Periódicos CAPES
 
-[![npm version](https://badge.fury.io/js/mcp-periodicos-capes.svg)](https://badge.fury.io/js/mcp-periodicos-capes)
+![NPM Version](https://img.shields.io/npm/v/mcp-periodicos-capes)
 
 MCP server para consulta de periódicos científicos do Portal de Periódicos CAPES.
 
