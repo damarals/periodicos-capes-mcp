@@ -1,6 +1,6 @@
 <div align="center">
 <h1>MCP Server - Periódicos CAPES</h1>
-    <img src="https://img.shields.io/npm/v/periodicos-capes-mcp" alt="NPM Version" />
+    <a href="https://www.npmjs.com/package/periodicos-capes-mcp"><img src="https://img.shields.io/npm/v/periodicos-capes-mcp" alt="NPM Version" /></a>
     <img src="https://img.shields.io/github/last-commit/damarals/periodicos-capes-mcp/main?path=README.md&label=%C3%BAltima%20atualiza%C3%A7%C3%A3o&color=blue" alt="Latest Update" >
 </div>
 <br />
