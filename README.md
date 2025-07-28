@@ -1,7 +1,7 @@
 <div align="center">
 <h1>MCP Server - Periódicos CAPES</h1>
-    <img src="https://img.shields.io/npm/v/mcp-periodicos-capes" alt="NPM Version" />
-    <img src="https://img.shields.io/github/last-commit/damarals/mcp-periodicos-capes/main?path=README.md&label=%C3%BAltima%20atualiza%C3%A7%C3%A3o&color=blue" alt="Latest Update" >
+    <img src="https://img.shields.io/npm/v/periodicos-capes-mcp" alt="NPM Version" />
+    <img src="https://img.shields.io/github/last-commit/damarals/periodicos-capes-mcp/main?path=README.md&label=%C3%BAltima%20atualiza%C3%A7%C3%A3o&color=blue" alt="Latest Update" >
 </div>
 <br />
 <div align="center"><strong>Servidor MCP para Consulta de Periódicos Científicos</strong></div>
@@ -20,10 +20,10 @@ O MCP Server - Periódicos CAPES é uma aplicação que implementa o protocolo M
 
 ```bash
 # Instalar globalmente via NPM
-npm install -g mcp-periodicos-capes
+npm install -g periodicos-capes-mcp
 
 # Exemplo de configuração no Claude Code
-claude mcp add capes mcp-capes
+claude mcp add capes periodicos-capes-mcp
 ```
 
 ## Como Usar
@@ -116,8 +116,8 @@ Obtém detalhes completos de um artigo específico pelo ID.
 
 ```bash
 # Clonar repositório
-git clone https://github.com/damarals/mcp-periodicos-capes.git
-cd mcp-periodicos-capes
+git clone https://github.com/damarals/periodicos-capes-mcp.git
+cd periodicos-capes-mcp
 
 # Instalar dependências
 npm install

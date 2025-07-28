@@ -1,11 +1,11 @@
 {
-  "name": "mcp-periodicos-capes",
+  "name": "periodicos-capes-mcp",
   "version": "2.0.0",
   "description": "MCP server para consulta de periódicos científicos do Portal de Periódicos CAPES",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "mcp-capes": "./dist/index.js"
+    "periodicos-capes-mcp": "./dist/index.js"
   },
   "files": [
     "dist/**/*",
@@ -32,12 +32,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/damarals/mcp-periodicos-capes.git"
+    "url": "git+https://github.com/damarals/periodicos-capes-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/damarals/mcp-periodicos-capes/issues"
+    "url": "https://github.com/damarals/periodicos-capes-mcp/issues"
   },
-  "homepage": "https://github.com/damarals/mcp-periodicos-capes#readme",
+  "homepage": "https://github.com/damarals/periodicos-capes-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },

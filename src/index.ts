@@ -18,7 +18,7 @@ class CAPESMCPServer {
   constructor() {
     this.server = new Server(
       {
-        name: 'mcp-periodicos-capes',
+        name: 'periodicos-capes-mcp',
         version: '1.0.0',
       },
       {
