@@ -10,6 +10,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { CAPESScraper } from './scraper.js';
 import { SearchOptions, DOCUMENT_TYPES, LANGUAGES } from './types.js';
+import { RISExporter, RISExportResult } from './ris-exporter.js';
 
 class CAPESMCPServer {
   private server: Server;
@@ -200,6 +201,36 @@ class CAPESMCPServer {
               required: ['article_id'],
             },
           },
+          {
+            name: 'export_to_ris',
+            description: 'Export articles to RIS bibliographic format file for literature review and reference management',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                articles: {
+                  type: 'array',
+                  description: 'Array of articles to export (from search_capes results with full_details: true)',
+                  items: {
+                    type: 'object'
+                  }
+                },
+                return_content: {
+                  type: 'boolean',
+                  description: 'Return RIS content as string instead of file path (default: false, useful for small datasets)',
+                  default: false
+                },
+                output_dir: {
+                  type: 'string',
+                  description: 'Output directory for RIS file (default: current working directory)'
+                },
+                filename: {
+                  type: 'string',
+                  description: 'Custom filename for RIS file (default: auto-generated with timestamp)'
+                }
+              },
+              required: ['articles'],
+            },
+          },
         ],
       };
     });
@@ -310,6 +341,48 @@ class CAPESMCPServer {
               },
             ],
           };
+        }
+
+        if (name === 'export_to_ris') {
+          if (!args) {
+            throw new McpError(ErrorCode.InvalidParams, 'Arguments are required');
+          }
+
+          const articles = args.articles as any[];
+          const returnContent = args.return_content as boolean || false;
+          const outputDir = args.output_dir as string | undefined;
+          const filename = args.filename as string | undefined;
+
+          if (!articles || !Array.isArray(articles)) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              'articles parameter is required and must be an array'
+            );
+          }
+
+          if (returnContent) {
+            // Return content as string (old behavior)
+            const risContent = RISExporter.exportToRIS(articles);
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: risContent,
+                },
+              ],
+            };
+          } else {
+            // Export to file and return metadata
+            const result = RISExporter.exportToRISFile(articles, outputDir, filename);
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+            };
+          }
         }
 
         throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);

@@ -28,7 +28,7 @@ claude mcp add capes periodicos-capes-mcp
 
 ## Como Usar
 
-O servidor fornece três ferramentas principais:
+O servidor fornece quatro ferramentas principais:
 
 ### search_capes
 
@@ -112,6 +112,65 @@ Obtém detalhes completos de um artigo específico pelo ID.
 }
 ```
 
+### export_to_ris
+
+🆕 **Nova funcionalidade!** Exporta artigos para formato RIS bibliográfico, compatível com ferramentas de revisão sistemática como Rayyan, Zotero, EndNote e Mendeley.
+
+**Parâmetros:**
+- `articles` (obrigatório): Array de artigos (resultado do search_capes com full_details: true)
+- `return_content` (opcional): Retornar conteúdo RIS como string ao invés de arquivo (default: false)
+- `output_dir` (opcional): Diretório de saída para arquivo RIS (default: diretório atual)
+- `filename` (opcional): Nome customizado do arquivo (default: auto-gerado com timestamp)
+
+**Exemplos:**
+
+Exportação básica (salva na pasta atual):
+```json
+{
+  "articles": [resultado_do_search_capes]
+}
+```
+
+Exportação com diretório customizado:
+```json
+{
+  "articles": [resultado_do_search_capes],
+  "output_dir": "./exports",
+  "filename": "minha-revisao-sistematica"
+}
+```
+
+Retornar como string (para datasets pequenos):
+```json
+{
+  "articles": [resultado_do_search_capes],
+  "return_content": true
+}
+```
+
+**Formato RIS gerado:**
+- Tipos de documento mapeados corretamente (JOUR, CHAP, etc.)
+- Abstracts completos (quando disponíveis)
+- Metadados bibliográficos padrão
+- Compatível com ferramentas de revisão sistemática
+
+**Exemplo de workflow completo:**
+```json
+// 1. Buscar artigos com detalhes completos
+{
+  "query": "machine learning healthcare",
+  "max_results": 50,
+  "full_details": true
+}
+
+// 2. Exportar para RIS
+{
+  "articles": [resultado_da_busca],
+  "filename": "ml-healthcare-review"
+}
+// Resultado: ./ml-healthcare-review.ris
+```
+
 ## Desenvolvimento
 
 ```bash
@@ -132,11 +191,13 @@ npm start
 ## Características
 
 - Consulta automatizada de artigos científicos no Portal de Periódicos CAPES
+- 🆕 **Exportação RIS**: Gera arquivos RIS compatíveis com Rayyan, Zotero, EndNote
 - Busca paralela para melhor performance com controle de workers
 - Sistema de busca com sintaxe avançada ou simples
 - Preview de busca para testar queries rapidamente sem baixar dados
 - Filtros avançados: tipo de documento, acesso aberto, revisão por pares, ano, idioma
 - Extração de metadados completos: título, autores, DOI, abstract, ISSN, etc.
+- 🆕 **Captura de tipos de documento**: Identifica automaticamente se é Artigo, Capítulo de livro, etc.
 - Modo rápido (informações básicas) vs modo completo (detalhes extensos)
 - Controle fino de parâmetros: timeout, número de resultados, páginas
 - Integração nativa com o protocolo MCP para modelos de linguagem

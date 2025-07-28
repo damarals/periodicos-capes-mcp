@@ -154,6 +154,9 @@ export class CAPESScraper {
                               $section.text().toLowerCase().includes('peer') ||
                               $section.text().toLowerCase().includes('reviewed');
 
+        const documentTypeElement = $section.find('.fw-semibold').first();
+        const documentType = documentTypeElement.length ? documentTypeElement.text().trim() : undefined;
+
         if (title && articleId) {
           listings.push({
             title,
@@ -164,6 +167,7 @@ export class CAPESScraper {
             journal,
             publisher,
             authors,
+            document_type: documentType,
             is_open_access: isOpenAccess,
             is_peer_reviewed: isPeerReviewed,
           });
@@ -398,6 +402,7 @@ export class CAPESScraper {
           detail_url: listing.detail_url,
           journal: listing.journal,
           publisher: listing.publisher,
+          document_type: listing.document_type,
           is_open_access: details.is_open_access || false,
           is_peer_reviewed: details.is_peer_reviewed || false,
           ...details,
@@ -452,6 +457,7 @@ export class CAPESScraper {
         detail_url: listing.detail_url,
         journal: listing.journal,
         publisher: listing.publisher,
+        document_type: listing.document_type,
         is_open_access: listing.is_open_access || false,
         is_peer_reviewed: listing.is_peer_reviewed || false,
       }));

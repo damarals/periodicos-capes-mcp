@@ -17,6 +17,7 @@ export interface Article {
   language?: string;
   publisher?: string;
   detail_url?: string;
+  document_type?: string;
   is_open_access: boolean;
   is_peer_reviewed: boolean;
 }
@@ -47,6 +48,7 @@ export interface BasicArticleInfo {
   journal?: string;
   publisher?: string;
   authors?: string[];
+  document_type?: string;
   is_open_access?: boolean;
   is_peer_reviewed?: boolean;
 }
