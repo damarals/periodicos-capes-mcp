@@ -2,6 +2,21 @@
 export const DOCUMENT_TYPES = ['Artigo', 'Capítulo de livro', 'Carta', 'Errata', 'Revisão'] as const;
 export const LANGUAGES = ['Inglês', 'Português', 'Espanhol', 'Francês', 'Alemão', 'Italiano'] as const;
 
+export interface ArticleMetrics {
+  // Citation metrics (OpenAlex)
+  cited_by_count: number;
+  fwci?: number;
+  publication_year: number;
+  is_open_access: boolean;
+  open_access_oa_date?: string;
+  
+  // Journal quality metrics (Qualis)
+  qualis?: {
+    classification: string;
+    area: string;
+  };
+}
+
 export interface Article {
   title: string;
   authors: string[];
@@ -20,6 +35,7 @@ export interface Article {
   document_type?: string;
   is_open_access: boolean;
   is_peer_reviewed: boolean;
+  metrics?: ArticleMetrics;
 }
 
 export interface SearchOptions {
@@ -30,6 +46,7 @@ export interface SearchOptions {
   max_workers?: number;
   timeout?: number;
   advanced?: boolean;
+  include_metrics?: boolean;
   // Search filters
   document_types?: string[];
   open_access_only?: boolean;

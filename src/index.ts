@@ -80,6 +80,11 @@ class CAPESMCPServer {
                   description: 'Use advanced search syntax (default: true)',
                   default: true,
                 },
+                include_metrics: {
+                  type: 'boolean',
+                  description: 'Include citation and journal quality metrics (OpenAlex + Qualis) (default: false)',
+                  default: false,
+                },
                 document_types: {
                   type: 'array',
                   description: 'Filter by document types',
@@ -140,6 +145,11 @@ class CAPESMCPServer {
                   type: 'boolean',
                   description: 'Use advanced search syntax (default: true)',
                   default: true,
+                },
+                include_metrics: {
+                  type: 'boolean',
+                  description: 'Include citation and journal quality metrics (OpenAlex + Qualis) (default: false)',
+                  default: false,
                 },
                 document_types: {
                   type: 'array',
@@ -252,6 +262,7 @@ class CAPESMCPServer {
             max_workers: (args.max_workers as number) || 5,
             timeout: (args.timeout as number) || 30000,
             advanced: (args.advanced as boolean) !== false,
+            include_metrics: (args.include_metrics as boolean) || false,
             document_types: args.document_types as string[] | undefined,
             open_access_only: args.open_access_only as boolean | undefined,
             peer_reviewed_only: args.peer_reviewed_only as boolean | undefined,
@@ -289,6 +300,7 @@ class CAPESMCPServer {
             query: args.query as string,
             timeout: (args.timeout as number) || 30000,
             advanced: (args.advanced as boolean) !== false,
+            include_metrics: (args.include_metrics as boolean) || false,
             document_types: args.document_types as string[] | undefined,
             open_access_only: args.open_access_only as boolean | undefined,
             peer_reviewed_only: args.peer_reviewed_only as boolean | undefined,

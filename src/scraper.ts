@@ -1,5 +1,7 @@
 import * as cheerio from 'cheerio';
 import { Article, BasicArticleInfo, SearchOptions, SearchResult, SearchPreviewResult } from './types.js';
+import { QualisService } from './qualis-service.js';
+import { OpenAlexService } from './openalex-service.js';
 
 export class CAPESScraper {
   private static readonly BASE_URL = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html';
@@ -408,6 +410,7 @@ export class CAPESScraper {
           ...details,
         };
 
+
         return article;
       } catch (error) {
         console.error(`Error processing article ${listing.article_id}:`, error);
@@ -426,7 +429,81 @@ export class CAPESScraper {
       });
     }
 
+    // Add metrics (OpenAlex + Qualis) if requested
+    if (options.include_metrics) {
+      await this.enrichWithMetrics(articles);
+    }
+
     return articles;
+  }
+
+  private async enrichWithMetrics(articles: Article[]): Promise<void> {
+    console.log('Enriching articles with citation and journal quality metrics...');
+    
+    // First, add Qualis data for articles with ISSN
+    const qualisService = QualisService.getInstance();
+    let qualisEnrichedCount = 0;
+    
+    for (const article of articles) {
+      if (article.issn) {
+        const qualisInfo = qualisService.getQualisByISSN(article.issn);
+        if (qualisInfo) {
+          if (!article.metrics) {
+            article.metrics = {
+              cited_by_count: 0,
+              publication_year: new Date().getFullYear(),
+              is_open_access: false,
+            };
+          }
+          article.metrics.qualis = {
+            classification: qualisInfo.classification,
+            area: qualisInfo.area,
+          };
+          qualisEnrichedCount++;
+        }
+      }
+    }
+    
+    console.log(`Added Qualis data to ${qualisEnrichedCount} articles`);
+    
+    // Then, add OpenAlex citation metrics for articles with DOI
+    const articlesWithDOI = articles.filter(article => article.doi);
+    if (articlesWithDOI.length === 0) {
+      console.log('No articles with DOI found, skipping OpenAlex enrichment');
+      return;
+    }
+
+    const dois = articlesWithDOI.map(article => article.doi!);
+    console.log(`Found ${dois.length} articles with DOI, fetching citation metrics...`);
+
+    try {
+      // Fetch OpenAlex metrics in batches
+      const openAlexMetricsMap = await OpenAlexService.getMetricsByDOIs(dois);
+      
+      // Apply OpenAlex metrics to articles
+      let openAlexEnrichedCount = 0;
+      for (const article of articlesWithDOI) {
+        if (article.doi) {
+          const openAlexMetrics = openAlexMetricsMap.get(article.doi);
+          if (openAlexMetrics) {
+            if (!article.metrics) {
+              article.metrics = openAlexMetrics;
+            } else {
+              // Merge OpenAlex metrics with existing metrics (keeping Qualis)
+              article.metrics = {
+                ...openAlexMetrics,
+                qualis: article.metrics.qualis, // Preserve Qualis data
+              };
+            }
+            openAlexEnrichedCount++;
+          }
+        }
+      }
+      
+      console.log(`Successfully enriched ${openAlexEnrichedCount} articles with OpenAlex metrics`);
+    } catch (error) {
+      console.error('Error enriching articles with OpenAlex:', error);
+    }
   }
 
   async search(options: SearchOptions): Promise<SearchResult> {
@@ -441,15 +518,22 @@ export class CAPESScraper {
 
     console.log(`Found ${articleListings.length} article listings`);
 
+    // Apply max_results limit to listings first (before expensive operations)
+    let limitedListings = articleListings;
+    if (options.max_results && options.max_results > 0) {
+      limitedListings = articleListings.slice(0, options.max_results);
+      console.log(`Limited to ${limitedListings.length} articles for processing (max_results: ${options.max_results})`);
+    }
+
     let articles: Article[];
 
     if (options.full_details) {
-      // Phase 2: Fetch detailed metadata
-      console.log('Fetching detailed metadata for each article');
-      articles = await this.fetchArticleDetails(articleListings, options);
+      // Phase 2: Fetch detailed metadata (only for limited set)
+      console.log('Fetching detailed metadata for selected articles');
+      articles = await this.fetchArticleDetails(limitedListings, options);
     } else {
       // Convert basic listings to Article objects without detailed metadata
-      articles = articleListings.map(listing => ({
+      articles = limitedListings.map(listing => ({
         title: listing.title,
         authors: listing.authors || [],
         search_term: listing.theme,
@@ -461,12 +545,6 @@ export class CAPESScraper {
         is_open_access: listing.is_open_access || false,
         is_peer_reviewed: listing.is_peer_reviewed || false,
       }));
-    }
-
-    // Apply max_results limit if specified
-    if (options.max_results && options.max_results > 0) {
-      articles = articles.slice(0, options.max_results);
-      console.log(`Limited results to ${articles.length} articles (max_results: ${options.max_results})`);
     }
 
     console.log(`Completed: Found ${articles.length} articles`);
