@@ -88,7 +88,6 @@ export class RISExporter {
     if (article.title) {
       lines.push(`TI  - ${article.title}`);
     } else {
-      console.warn('Article without title, skipping:', article.article_id);
       return null;
     }
 

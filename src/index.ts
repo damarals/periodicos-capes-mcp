@@ -403,7 +403,6 @@ class CAPESMCPServer {
           throw error;
         }
 
-        console.error(`Error in ${name}:`, error);
         throw new McpError(
           ErrorCode.InternalError,
           `Error executing ${name}: ${error instanceof Error ? error.message : String(error)}`
@@ -415,7 +414,6 @@ class CAPESMCPServer {
   async run() {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error('CAPES MCP server running on stdio');
   }
 }
 

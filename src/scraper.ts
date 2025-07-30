@@ -95,7 +95,6 @@ export class CAPESScraper {
       }
       return 0;
     } catch (error) {
-      console.warn('Error determining total pages:', error);
       return 1;
     }
   }
@@ -175,7 +174,6 @@ export class CAPESScraper {
           });
         }
       } catch (error) {
-        console.error('Error extracting basic article info:', error);
       }
     });
 
@@ -282,7 +280,6 @@ export class CAPESScraper {
 
       return metadata;
     } catch (error) {
-      console.error(`Error fetching details for ${articleId}:`, error);
       return {};
     }
   }
@@ -343,7 +340,6 @@ export class CAPESScraper {
 
       return listings;
     } catch (error) {
-      console.error(`Error fetching listings for ${theme}:`, error);
       return [];
     }
   }
@@ -375,7 +371,6 @@ export class CAPESScraper {
       
       return this.extractBasicArticleInfo($, theme, searchTerm);
     } catch (error) {
-      console.error(`Error fetching page ${page} for ${theme}:`, error);
       return [];
     }
   }
@@ -390,7 +385,6 @@ export class CAPESScraper {
     const processArticle = async (listing: BasicArticleInfo): Promise<Article | null> => {
       try {
         if (!listing.article_id) {
-          console.warn(`Missing article ID for ${listing.title}`);
           return null;
         }
 
@@ -413,7 +407,6 @@ export class CAPESScraper {
 
         return article;
       } catch (error) {
-        console.error(`Error processing article ${listing.article_id}:`, error);
         return null;
       }
     };
@@ -438,7 +431,6 @@ export class CAPESScraper {
   }
 
   private async enrichWithMetrics(articles: Article[]): Promise<void> {
-    console.log('Enriching articles with citation and journal quality metrics...');
     
     // First, add Qualis data for articles with ISSN
     const qualisService = QualisService.getInstance();
@@ -464,17 +456,14 @@ export class CAPESScraper {
       }
     }
     
-    console.log(`Added Qualis data to ${qualisEnrichedCount} articles`);
     
     // Then, add OpenAlex citation metrics for articles with DOI
     const articlesWithDOI = articles.filter(article => article.doi);
     if (articlesWithDOI.length === 0) {
-      console.log('No articles with DOI found, skipping OpenAlex enrichment');
       return;
     }
 
     const dois = articlesWithDOI.map(article => article.doi!);
-    console.log(`Found ${dois.length} articles with DOI, fetching citation metrics...`);
 
     try {
       // Fetch OpenAlex metrics in batches
@@ -500,14 +489,11 @@ export class CAPESScraper {
         }
       }
       
-      console.log(`Successfully enriched ${openAlexEnrichedCount} articles with OpenAlex metrics`);
     } catch (error) {
-      console.error('Error enriching articles with OpenAlex:', error);
     }
   }
 
   async search(options: SearchOptions): Promise<SearchResult> {
-    console.log(`Starting search for: ${options.query}`);
     
     // Phase 1: Get all article listings
     const articleListings = await this.getListingsForTerm(
@@ -516,20 +502,17 @@ export class CAPESScraper {
       options
     );
 
-    console.log(`Found ${articleListings.length} article listings`);
 
     // Apply max_results limit to listings first (before expensive operations)
     let limitedListings = articleListings;
     if (options.max_results && options.max_results > 0) {
       limitedListings = articleListings.slice(0, options.max_results);
-      console.log(`Limited to ${limitedListings.length} articles for processing (max_results: ${options.max_results})`);
     }
 
     let articles: Article[];
 
     if (options.full_details) {
       // Phase 2: Fetch detailed metadata (only for limited set)
-      console.log('Fetching detailed metadata for selected articles');
       articles = await this.fetchArticleDetails(limitedListings, options);
     } else {
       // Convert basic listings to Article objects without detailed metadata
@@ -547,7 +530,6 @@ export class CAPESScraper {
       }));
     }
 
-    console.log(`Completed: Found ${articles.length} articles`);
 
     return {
       articles,
@@ -558,7 +540,6 @@ export class CAPESScraper {
   }
 
   async searchPreview(options: SearchOptions): Promise<SearchPreviewResult> {
-    console.log(`Getting search preview for: ${options.query}`);
     
     const url = this.constructSearchUrl(options.query, options, 1);
     
@@ -589,7 +570,6 @@ export class CAPESScraper {
       const maxWorkers = options.max_workers || this.defaultMaxWorkers;
       const estimatedTimeSeconds = Math.ceil((totalPages * 2) / maxWorkers);
 
-      console.log(`Preview: Found ${totalFound} articles across ${totalPages} pages`);
 
       return {
         query: options.query,
@@ -606,7 +586,6 @@ export class CAPESScraper {
         },
       };
     } catch (error) {
-      console.error(`Error getting search preview:`, error);
       throw error;
     }
   }

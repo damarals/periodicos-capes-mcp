@@ -39,7 +39,6 @@ export class QualisService {
         WHERE issn = ? OR issn = ?
       `);
     } catch (error) {
-      console.warn('Qualis database not found or invalid. Qualis functionality disabled.');
       this.db = null;
     }
   }
@@ -62,7 +61,6 @@ export class QualisService {
       const result = this.getQualisStmt.get(issnWithHyphen, issnWithoutHyphen) as QualisRecord | undefined;
       return result || null;
     } catch (error) {
-      console.error('Error querying Qualis database:', error);
       return null;
     }
   }

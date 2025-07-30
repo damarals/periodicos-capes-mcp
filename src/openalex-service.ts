@@ -21,7 +21,6 @@ export class OpenAlexService {
       const data = await response.json();
       return this.parseOpenAlexWork(data);
     } catch (error) {
-      console.error(`Error fetching metrics for DOI ${doi}:`, error);
       return null;
     }
   }
@@ -32,7 +31,6 @@ export class OpenAlexService {
   static async getMetricsByDOIs(dois: string[]): Promise<Map<string, ArticleMetrics>> {
     const results = new Map<string, ArticleMetrics>();
     
-    console.log(`Fetching OpenAlex metrics for ${dois.length} DOIs using batch API...`);
     
     // Process in batches of 50 (OpenAlex limit per request)
     const BATCH_SIZE = 50;
@@ -52,7 +50,6 @@ export class OpenAlexService {
       }
     }
     
-    console.log(`Successfully fetched metrics for ${results.size}/${dois.length} DOIs`);
     return results;
   }
 
@@ -67,13 +64,11 @@ export class OpenAlexService {
       const doiFilter = `doi:${dois.join('|')}`;
       const url = `${this.BASE_URL}/works?filter=${encodeURIComponent(doiFilter)}&per-page=${dois.length}`;
       
-      console.log(`Batch request for ${dois.length} DOIs: ${url}`);
       
       const response = await fetch(url);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`OpenAlex batch API error: ${response.status} - ${errorText}`);
         return results;
       }
 
@@ -81,7 +76,6 @@ export class OpenAlexService {
       
       // Process each work in the response
       if (data.results && Array.isArray(data.results)) {
-        console.log(`Received ${data.results.length} results from OpenAlex`);
         
         for (const work of data.results) {
           const metrics = this.parseOpenAlexWork(work);
@@ -93,7 +87,6 @@ export class OpenAlexService {
         }
       }
     } catch (error) {
-      console.error('Error processing DOI batch:', error);
     }
     
     return results;
@@ -113,7 +106,6 @@ export class OpenAlexService {
         open_access_oa_date: work.open_access?.oa_date || undefined,
       };
     } catch (error) {
-      console.error('Error parsing OpenAlex work:', error);
       return null;
     }
   }
