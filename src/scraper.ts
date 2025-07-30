@@ -89,7 +89,7 @@ export class CAPESScraper {
     try {
       const totalSpan = $('div.pagination-information span.total');
       if (totalSpan.length && totalSpan.text().trim()) {
-        const totalItems = parseInt(totalSpan.text().trim());
+        const totalItems = parseInt(totalSpan.text().trim().replace(/\./g, ''));
         const perPage = 30; // CAPES default items per page
         return Math.ceil(totalItems / perPage);
       }
@@ -564,7 +564,7 @@ export class CAPESScraper {
       // Get total pages and items
       const totalPages = this.getTotalPages($);
       const totalSpan = $('div.pagination-information span.total');
-      const totalFound = totalSpan.length ? parseInt(totalSpan.text().trim()) : 0;
+      const totalFound = totalSpan.length ? parseInt(totalSpan.text().trim().replace(/\./g, '')) : 0;
 
       // Estimate time based on total pages (assuming ~2 seconds per page with current workers)
       const maxWorkers = options.max_workers || this.defaultMaxWorkers;
