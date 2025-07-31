@@ -533,7 +533,7 @@ export class CAPESScraper {
 
     return {
       articles,
-      total_found: articles.length,
+      total_found: articleListings.length, // Use original listings count, not limited articles
       pages_processed: options.max_pages || 0,
       query: options.query,
     };

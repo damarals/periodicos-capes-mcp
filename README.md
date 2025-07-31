@@ -21,8 +21,8 @@ O MCP Server - Periódicos CAPES implementa o protocolo Model Context Protocol p
 - Busca automatizada no Portal CAPES com processamento paralelo
 - Métricas integradas: OpenAlex (citações, FWCI) + Qualis (classificação brasileira)
 - Filtros por qualidade, ano, tipo de documento, idioma
-- Export RIS para gerenciadores de referência
-- Preview de busca para testar queries sem baixar dados
+- Export RIS integrado com economia de tokens
+- Modo de metadados apenas para otimização de performance
 
 ## Instalação
 
@@ -50,7 +50,7 @@ claude mcp add capes periodicos-capes-mcp
 
 ## Como Usar
 
-O servidor fornece quatro ferramentas principais:
+O servidor fornece duas ferramentas principais:
 
 ### search_capes
 
@@ -74,26 +74,34 @@ Busca artigos no Portal de Periódicos CAPES com opções avançadas de filtrage
 | `year_max` | number | ✗ | - | Ano máximo de publicação (1800-2030) |
 | `languages` | array | ✗ | - | Filtrar por idiomas: 'Inglês', 'Português', 'Espanhol', 'Francês', 'Alemão', 'Italiano' |
 | `include_metrics` | boolean | ✗ | `false` | Incluir métricas OpenAlex e Qualis |
+| `export_ris` | boolean | ✗ | `false` | Exportar resultados para arquivo RIS |
+| `ris_output_dir` | string | ✗ | diretório atual | Diretório de saída do arquivo RIS |
+| `ris_return_content` | boolean | ✗ | `false` | Incluir conteúdo RIS na resposta |
+| `show_metadata_only` | boolean | ✗ | `false` | Retornar apenas metadados para economizar tokens |
+
+**Funcionalidades Integradas:**
+
+- **Export RIS Integrado**: Use `export_ris: true` para exportar automaticamente os resultados para formato RIS durante a busca
+- **Economia de Tokens**: Use `show_metadata_only: true` para retornar apenas metadados (total_found, query, etc.) sem os artigos completos
+- **Combinação Perfeita**: `export_ris: true` + `show_metadata_only: true` = exporta arquivo RIS + retorna apenas metadados da operação
 
 Use `include_metrics: true` para obter métricas de citação (OpenAlex) e classificação Qualis integradas aos resultados.
 
-### search_preview_capes
+**Exemplo Completo:**
+```json
+{
+  "query": "machine learning wildfires",
+  "max_results": 10,
+  "full_details": true,
+  "export_ris": true,
+  "show_metadata_only": true,
+  "year_min": 2020,
+  "document_types": ["Artigo"],
+  "open_access_only": true
+}
+```
 
-Obtém uma prévia dos resultados de busca sem baixar os artigos (ideal para testar queries).
-
-**Parâmetros:**
-
-| Parâmetro | Tipo | Obrigatório | Padrão | Descrição |
-|-----------|------|-------------|--------|-----------|
-| `query` | string | ✓ | - | String de busca |
-| `timeout` | number | ✗ | `30000` | Timeout em milissegundos |
-| `advanced` | boolean | ✗ | `true` | Usar sintaxe avançada |
-| `document_types` | array | ✗ | - | Filtrar por tipos de documento |
-| `open_access_only` | boolean | ✗ | - | Filtrar por acesso aberto |
-| `peer_reviewed_only` | boolean | ✗ | - | Filtrar por revisão por pares |
-| `year_min` | number | ✗ | - | Ano mínimo de publicação |
-| `year_max` | number | ✗ | - | Ano máximo de publicação |
-| `languages` | array | ✗ | - | Filtrar por idiomas |
+**💡 Dica:** Para preview rápido dos resultados sem baixar artigos completos, use `show_metadata_only: true`.
 
 ### get_article_details
 
@@ -106,18 +114,7 @@ Obtém metadados completos de um artigo específico usando seu ID.
 | `article_id` | string | ✓ | - | ID do artigo no CAPES |
 | `timeout` | number | ✗ | `30000` | Timeout em milissegundos |
 
-### export_to_ris
-
-Exporta resultados para formato RIS compatível com gerenciadores de referência (Zotero, Mendeley) e ferramentas de revisão sistemática (Rayyan).
-
-**Parâmetros:**
-
-| Parâmetro | Tipo | Obrigatório | Padrão | Descrição |
-|-----------|------|-------------|--------|-----------|
-| `articles` | array | ✓ | - | Array de artigos (resultado do search_capes com full_details: true) |
-| `filename` | string | ✗ | auto-gerado | Nome customizado do arquivo |
-| `output_dir` | string | ✗ | diretório atual | Diretório de saída |
-| `return_content` | boolean | ✗ | `false` | Retornar conteúdo como string |
+**💡 Exportação RIS:** A funcionalidade de export RIS foi integrada diretamente ao `search_capes`. Use `export_ris: true` para exportar automaticamente durante a busca.
 ## Desenvolvimento
 
 ```bash
