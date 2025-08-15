@@ -77,17 +77,51 @@ export interface SearchResult {
   query: string;
 }
 
+// New consolidated filter interface
+export interface SearchFilters {
+  document_types?: string[];
+  open_access_only?: boolean;
+  peer_reviewed_only?: boolean;
+  year_range?: [number, number]; // [min, max]
+  languages?: string[];
+}
+
+// Sort options for get_articles
+export type SortBy = 'relevance' | 'date_desc' | 'date_asc';
+
+// Export formats
+export type ExportFormat = 'ris' | 'bibtex';
+
+// Preview result (simplified, no estimated_time)
 export interface SearchPreviewResult {
   query: string;
   total_found: number;
-  estimated_time_seconds: number;
-  search_url: string;
-  filters_applied: {
-    document_types?: string[];
-    open_access_only?: boolean;
-    peer_reviewed_only?: boolean;
-    year_min?: number;
-    year_max?: number;
-    languages?: string[];
+  sample_titles: string[];
+  filters_applied?: SearchFilters;
+}
+
+// Result for get_articles
+export interface ArticlesBatchResult {
+  articles: Article[];
+  total_found: number;
+  start_index: number;
+  count_returned: number;
+  query: string;
+  sort_by: SortBy;
+  filters_applied?: SearchFilters;
+}
+
+// Export result with metadata
+export interface ExportResult {
+  export_completed: true;
+  output_directory: string;
+  files_created: string[];
+  articles_exported: number;
+  format: ExportFormat;
+  search_metadata: {
+    query: string;
+    total_found: number;
+    search_date: string;
+    filters_applied?: SearchFilters;
   };
 }

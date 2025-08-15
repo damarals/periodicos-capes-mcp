@@ -1,7 +1,21 @@
 import * as cheerio from 'cheerio';
-import { Article, BasicArticleInfo, SearchOptions, SearchResult, SearchPreviewResult } from './types.js';
+import { 
+  Article, 
+  BasicArticleInfo, 
+  SearchOptions, 
+  SearchResult, 
+  SearchPreviewResult,
+  SearchFilters,
+  SortBy,
+  ArticlesBatchResult,
+  ExportFormat,
+  ExportResult
+} from './types.js';
 import { QualisService } from './qualis-service.js';
 import { OpenAlexService } from './openalex-service.js';
+import { BibliographicExporter } from './bibliographic-exporter.js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class CAPESScraper {
   private static readonly BASE_URL = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html';
@@ -539,10 +553,45 @@ export class CAPESScraper {
     };
   }
 
-  async searchPreview(options: SearchOptions): Promise<SearchPreviewResult> {
+
+  // Helper function to convert SearchFilters to SearchOptions
+  private convertFiltersToOptions(query: string, filters?: SearchFilters): SearchOptions {
+    return {
+      query,
+      document_types: filters?.document_types,
+      open_access_only: filters?.open_access_only,
+      peer_reviewed_only: filters?.peer_reviewed_only,
+      year_min: filters?.year_range?.[0],
+      year_max: filters?.year_range?.[1],
+      languages: filters?.languages,
+      advanced: true, // Always use advanced search
+      include_metrics: false, // Default to false for performance
+    };
+  }
+
+  // Helper function to sort articles
+  private sortArticles(articles: Article[], sortBy: SortBy): Article[] {
+    if (sortBy === 'relevance') {
+      return articles; // Keep original order (CAPES relevance)
+    }
     
-    const url = this.constructSearchUrl(options.query, options, 1);
-    
+    return [...articles].sort((a, b) => {
+      const yearA = parseInt(a.publication_date || "0");
+      const yearB = parseInt(b.publication_date || "0");
+      
+      if (sortBy === 'date_desc') {
+        return yearB - yearA; // Newest first
+      } else { // date_asc
+        return yearA - yearB; // Oldest first
+      }
+    });
+  }
+
+  // NEW FUNCTION 1: Quick preview search
+  async searchPreview(query: string, filters?: SearchFilters): Promise<SearchPreviewResult> {
+    const options = this.convertFiltersToOptions(query, filters);
+    const url = this.constructSearchUrl(query, options, 1);
+
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.defaultTimeout);
@@ -561,32 +610,181 @@ export class CAPESScraper {
       const html = await response.text();
       const $ = cheerio.load(html);
 
-      // Get total pages and items
-      const totalPages = this.getTotalPages($);
+      // Get total found
       const totalSpan = $('div.pagination-information span.total');
       const totalFound = totalSpan.length ? parseInt(totalSpan.text().trim().replace(/\./g, '')) : 0;
 
-      // Estimate time based on total pages (assuming ~2 seconds per page with current workers)
-      const maxWorkers = options.max_workers || this.defaultMaxWorkers;
-      const estimatedTimeSeconds = Math.ceil((totalPages * 2) / maxWorkers);
-
+      // Extract sample titles from first page
+      const sampleTitles: string[] = [];
+      $('.result-busca .titulo-busca').slice(0, 5).each((_, elem) => {
+        const title = $(elem).text().trim();
+        if (title) {
+          sampleTitles.push(title);
+        }
+      });
 
       return {
-        query: options.query,
+        query,
         total_found: totalFound,
-        estimated_time_seconds: estimatedTimeSeconds,
-        search_url: url,
-        filters_applied: {
-          document_types: options.document_types,
-          open_access_only: options.open_access_only,
-          peer_reviewed_only: options.peer_reviewed_only,
-          year_min: options.year_min,
-          year_max: options.year_max,
-          languages: options.languages,
-        },
+        sample_titles: sampleTitles,
+        filters_applied: filters,
       };
     } catch (error) {
-      throw error;
+      throw new Error(`Preview search failed: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+
+  // NEW FUNCTION 2: Get articles with pagination and sorting
+  async getArticles(
+    query: string, 
+    startIndex: number, 
+    count: number, 
+    filters?: SearchFilters, 
+    sortBy: SortBy = 'relevance'
+  ): Promise<ArticlesBatchResult> {
+    const options = this.convertFiltersToOptions(query, filters);
+    options.full_details = true; // Always get full details for article batches
+    options.include_metrics = true; // Include metrics for better quality
+
+    // Calculate which pages we need based on startIndex and count
+    const itemsPerPage = 30; // CAPES default
+    const startPage = Math.floor(startIndex / itemsPerPage) + 1;
+    const endIndex = startIndex + count;
+    const endPage = Math.ceil(endIndex / itemsPerPage);
+
+    let allArticles: Article[] = [];
+
+    // Fetch only the pages we need
+    for (let page = startPage; page <= endPage; page++) {
+      try {
+        const pageListings = await this.fetchPage(query, query, page, options);
+        const pageArticles = await this.fetchArticleDetails(pageListings, options);
+        allArticles.push(...pageArticles);
+      } catch (error) {
+        // Continue with other pages if one fails
+        continue;
+      }
+    }
+
+    // Get total count (we need this for metadata)
+    const previewResult = await this.searchPreview(query, filters);
+    
+    // Sort articles
+    const sortedArticles = this.sortArticles(allArticles, sortBy);
+    
+    // Extract the specific slice we want
+    const localStartIndex = startIndex % itemsPerPage;
+    const requestedArticles = sortedArticles.slice(localStartIndex, localStartIndex + count);
+
+    return {
+      articles: requestedArticles,
+      total_found: previewResult.total_found,
+      start_index: startIndex,
+      count_returned: requestedArticles.length,
+      query,
+      sort_by: sortBy,
+      filters_applied: filters,
+    };
+  }
+
+  // NEW FUNCTION 3: Export search with structured folder
+  async exportSearch(
+    query: string,
+    format: ExportFormat,
+    filters?: SearchFilters,
+    maxResults?: number
+  ): Promise<ExportResult> {
+    // First get all articles
+    const options = this.convertFiltersToOptions(query, filters);
+    options.full_details = true; // Always get full details for export
+    options.include_metrics = true; // Include metrics for academic quality
+    
+    if (maxResults) {
+      options.max_results = maxResults;
+    }
+
+    // Use the existing search function to get all articles
+    const searchResult = await this.search(options);
+    
+    if (!searchResult.articles || searchResult.articles.length === 0) {
+      throw new Error('No articles found for export');
+    }
+
+    // Create structured directory
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const dirName = `capes_export_${timestamp}`;
+    const exportDir = path.join(process.cwd(), dirName);
+    
+    // Create directory
+    if (!fs.existsSync(exportDir)) {
+      fs.mkdirSync(exportDir, { recursive: true });
+    }
+
+    // Export articles to file
+    let exportFileResult;
+    let exportFileName;
+    
+    if (format === 'ris') {
+      exportFileResult = BibliographicExporter.exportToRISFile(searchResult.articles, exportDir);
+      exportFileName = path.basename(exportFileResult.file_path);
+    } else if (format === 'bibtex') {
+      exportFileResult = BibliographicExporter.exportToBibTeXFile(searchResult.articles, exportDir);
+      exportFileName = path.basename(exportFileResult.file_path);
+    } else {
+      throw new Error(`Unsupported export format: ${format}`);
+    }
+
+    // Create metadata.json
+    const metadata = {
+      search_metadata: {
+        query,
+        total_found: searchResult.total_found,
+        articles_exported: searchResult.articles.length,
+        search_date: new Date().toISOString(),
+        filters_applied: filters,
+        format,
+        capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
+        tool_version: "3.0.0",
+        export_timestamp: timestamp
+      },
+      export_info: {
+        directory: exportDir,
+        files: [
+          {
+            name: exportFileName,
+            type: format,
+            size_bytes: exportFileResult.file_size_bytes,
+            article_count: exportFileResult.article_count
+          },
+          {
+            name: "metadata.json",
+            type: "metadata",
+            description: "Search and export metadata for reproducibility"
+          }
+        ]
+      },
+      usage_notes: {
+        import_to_zotero: format === 'ris' ? "Import the .ris file directly into Zotero" : "Use 'Import from BibTeX' option in Zotero",
+        import_to_mendeley: format === 'ris' ? "Use 'Import RIS' option" : "Use 'Import BibTeX' option", 
+        reproducibility: "This metadata.json contains all search parameters for exact reproduction"
+      }
+    };
+
+    const metadataPath = path.join(exportDir, 'metadata.json');
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+
+    return {
+      export_completed: true,
+      output_directory: exportDir,
+      files_created: [exportFileName, 'metadata.json'],
+      articles_exported: searchResult.articles.length,
+      format,
+      search_metadata: {
+        query,
+        total_found: searchResult.total_found,
+        search_date: new Date().toISOString(),
+        filters_applied: filters,
+      }
+    };
   }
 }
