@@ -12,17 +12,6 @@
 </div>
 <br />
 
-## ✨ Novidades v3.0.0
-
-**Arquitetura completamente refatorada** para melhor usabilidade com LLMs:
-
-- 🎯 **3 funções especializadas** ao invés de uma monolítica
-- 🧠 **Cognitivamente otimizada** para LLMs (máximo 4 parâmetros por função)
-- 📊 **Export estruturado** com pasta + metadados para reprodutibilidade
-- 📚 **Suporte BibTeX** além do RIS
-- ⚡ **Performance otimizada** com preview rápido e paginação eficiente
-- 🔄 **Sorting por data** (mais recentes/antigos primeiro)
-
 ## Introdução
 
 O MCP Server - Periódicos CAPES implementa o protocolo Model Context Protocol para permitir que modelos de linguagem consultem diretamente o Portal de Periódicos CAPES. Especialmente otimizado para **revisões sistemáticas de literatura (RSL)** e **mapeamentos sistemáticos (MSL)**.
@@ -30,11 +19,12 @@ O MCP Server - Periódicos CAPES implementa o protocolo Model Context Protocol p
 ## Características
 
 - 🔍 **Busca no Portal CAPES** (IEEE, ACM, Elsevier, WoS, Scopus, etc.)
+- 🛡️ **Acesso confiável**: ScrapingAnt API para bypass automático de proteções
 - 📈 **Métricas integradas**: OpenAlex (citações, FWCI) + Qualis (classificação brasileira)
 - 🎛️ **Filtros avançados**: tipo, acesso aberto, revisão por pares, ano, idioma
 - 📤 **Export bibliográfico**: RIS e BibTeX com pasta estruturada
 - 🔬 **Reprodutibilidade acadêmica**: metadados completos para compliance
-- ⚡ **Otimizada para LLMs**: interfaces cognitivamente simples
+- ⚡ **Performance otimizada**: Acesso direto via API especializada
 
 ## Instalação
 
@@ -42,10 +32,20 @@ O MCP Server - Periódicos CAPES implementa o protocolo Model Context Protocol p
 npm install -g periodicos-capes-mcp
 ```
 
-**Configuração:**
+**Pré-requisitos:**
+
+1. **Criar conta ScrapingAnt**: [https://scrapingant.com](https://scrapingant.com) (necessário para bypass de proteções)
+2. **Configurar API Key**: Adicione sua chave ao arquivo `.env`:
 
 ```bash
-# Claude Code - adicionar automaticamente
+# .env
+SCRAPINGANT_API_KEY="sua_chave_aqui"
+```
+
+**Configuração Claude Code:**
+
+```bash
+# Adicionar automaticamente
 claude mcp add capes periodicos-capes-mcp
 ```
 
@@ -178,68 +178,7 @@ Todos os filtros são opcionais e podem ser combinados:
 }
 ```
 
-## Workflows Acadêmicos
 
-### Revisão Sistemática de Literatura (RSL)
-
-```bash
-# 1. Exploração inicial
-preview_search("machine learning AND healthcare")
-# → "Encontrado 15.000 artigos. Precisa refinar?"
-
-# 2. Refinamento com filtros
-preview_search("machine learning AND healthcare", {
-  "year_range": [2020, 2024],
-  "open_access_only": true,
-  "document_types": ["Artigo"]
-})
-# → "Agora são 2.500 artigos. Melhor!"
-
-# 3. Análise de amostra
-get_articles("machine learning AND healthcare", 0, 20, filters, "date_desc")
-# → Analisa os 20 mais recentes
-
-# 4. Export completo para Zotero
-export_search("machine learning AND healthcare", "ris", filters, 500)
-# → Pasta estruturada com 500 artigos + metadados
-```
-
-### Mapeamento Sistemático (MSL)
-
-```bash
-# 1. Vários previews para múltiplos termos
-preview_search("blockchain AND supply chain")
-preview_search("distributed ledger AND logistics") 
-# → Entende escopo de diferentes termos
-
-# 2. Export agregado
-export_search("(blockchain OR distributed ledger) AND (supply chain OR logistics)", 
-              "bibtex", filters, 1000)
-# → Grande dataset para análise quantitativa
-```
-
-## Reprodutibilidade Acadêmica
-
-Cada export gera `metadata.json` com informações completas:
-
-```json
-{
-  "search_metadata": {
-    "query": "(machine learning) AND (healthcare)",
-    "total_found": 2847,
-    "search_date": "2025-01-15T14:30:52.000Z",
-    "filters_applied": { ... },
-    "capes_portal_info": "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-    "tool_version": "3.0.0"
-  },
-  "usage_notes": {
-    "import_to_zotero": "Import the .ris file directly into Zotero",
-    "reproducibility": "This metadata.json contains all search parameters for exact reproduction"
-  }
-}
-```
-
-**Ideal para protocolos PROSPERO e compliance de journals!**
 
 ## Desenvolvimento
 
@@ -258,16 +197,6 @@ npm run build
 npm start
 ```
 
-## Migração da v2.x
-
-A v3.0.0 introduz **breaking changes** com arquitetura completamente nova:
-
-| v2.x | v3.0.0 | Benefício |
-|------|--------|-----------|
-| `search_capes` (16 parâmetros) | `preview_search` + `get_articles` + `export_search` | Simplicidade cognitiva para LLMs |
-| Filtros como parâmetros separados | Objeto `filters` consolidado | Menos confusão de parâmetros |
-| Export inline (tokens) | Export para pasta estruturada | Zero consumo de tokens |
-| Só RIS | RIS + BibTeX | Compatibilidade LaTeX |
 
 ## Contribuindo
 

@@ -1,38 +1,60 @@
 import * as cheerio from 'cheerio';
-import { 
-  Article, 
-  BasicArticleInfo, 
-  SearchOptions, 
-  SearchResult, 
+import {
+  Article,
+  BasicArticleInfo,
+  SearchOptions,
+  SearchResult,
   SearchPreviewResult,
   SearchFilters,
   SortBy,
   ArticlesBatchResult,
   ExportFormat,
-  ExportResult
+  ExportResult,
 } from './types.js';
 import { QualisService } from './qualis-service.js';
 import { OpenAlexService } from './openalex-service.js';
 import { BibliographicExporter } from './bibliographic-exporter.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as dotenv from 'dotenv';
+
+// Carrega as variáveis de ambiente do arquivo .env
+dotenv.config();
 
 export class CAPESScraper {
   private static readonly BASE_URL = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html';
   private static readonly DETAIL_URL_PATTERN = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id={}';
-  
-  private static readonly USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
-  private static readonly DEFAULT_HEADERS = {
-    'User-Agent': CAPESScraper.USER_AGENT,
-    'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
-  };
+  private readonly scrapingAntApiKey: string;
 
-  private readonly defaultTimeout: number;
-  private readonly defaultMaxWorkers: number;
+  constructor() {
+    this.scrapingAntApiKey = process.env.SCRAPINGANT_API_KEY || '';
+  }
 
-  constructor(timeout = 30000, maxWorkers = 5) {
-    this.defaultTimeout = timeout;
-    this.defaultMaxWorkers = maxWorkers;
+  /**
+   * Fetches HTML content using the ScrapingAnt API to bypass anti-bot measures.
+   * @param targetUrl The URL of the CAPES portal page to scrape.
+   * @returns A promise that resolves to the HTML content of the page.
+   */
+  private async _fetchWithScrapingAnt(targetUrl: string): Promise<string> {
+    if (!this.scrapingAntApiKey) {
+      throw new Error("SCRAPINGANT_API_KEY environment variable is required. Please set it in your .env file.");
+    }
+
+    const encodedUrl = encodeURIComponent(targetUrl);
+    const scrapingAntUrl = `https://api.scrapingant.com/v2/general?url=${encodedUrl}&x-api-key=${this.scrapingAntApiKey}&browser=false`;
+
+    try {
+      const response = await fetch(scrapingAntUrl);
+
+      if (!response.ok) {
+        throw new Error(`ScrapingAnt API error: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.text();
+    } catch (error) {
+      // Adiciona mais contexto ao erro para facilitar a depuração.
+      throw new Error(`Failed to fetch from ScrapingAnt for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 
   private constructSearchUrl(searchTerm: string, options: SearchOptions, page: number = 1): string {
@@ -163,11 +185,11 @@ export class CAPESScraper {
         });
 
         const isOpenAccess = $section.find('.text-green-cool-vivid-50, .open-access, [title*="open access"], [alt*="open access"]').length > 0 ||
-                            $section.text().toLowerCase().includes('open access');
+                               $section.text().toLowerCase().includes('open access');
 
         const isPeerReviewed = $section.find('.text-violet-50, .peer-reviewed, [title*="peer"], [alt*="peer"]').length > 0 ||
-                              $section.text().toLowerCase().includes('peer') ||
-                              $section.text().toLowerCase().includes('reviewed');
+                                 $section.text().toLowerCase().includes('peer') ||
+                                 $section.text().toLowerCase().includes('reviewed');
 
         const documentTypeElement = $section.find('.fw-semibold').first();
         const documentType = documentTypeElement.length ? documentTypeElement.text().trim() : undefined;
@@ -188,31 +210,18 @@ export class CAPESScraper {
           });
         }
       } catch (error) {
+        console.error('Failed to extract article info:', error instanceof Error ? error.message : String(error));
       }
     });
 
     return listings;
   }
 
-  async scrapeArticleDetail(articleId: string, timeout?: number): Promise<Partial<Article>> {
+  async scrapeArticleDetail(articleId: string): Promise<Partial<Article>> {
     const detailUrl = CAPESScraper.DETAIL_URL_PATTERN.replace('{}', articleId);
     
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout || this.defaultTimeout);
-
-      const response = await fetch(detailUrl, {
-        signal: controller.signal,
-        headers: CAPESScraper.DEFAULT_HEADERS,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const html = await response.text();
+      const html = await this._fetchWithScrapingAnt(detailUrl);
       const $ = cheerio.load(html);
 
       const metadata: Partial<Article> = {
@@ -292,8 +301,10 @@ export class CAPESScraper {
         }
       });
 
+
       return metadata;
     } catch (error) {
+      console.error(`Failed to scrape article details for ${articleId}:`, error instanceof Error ? error.message : String(error));
       return {};
     }
   }
@@ -307,21 +318,7 @@ export class CAPESScraper {
     const url = this.constructSearchUrl(searchTerm, options, 1);
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.defaultTimeout);
-
-      const response = await fetch(url, {
-        signal: controller.signal,
-        headers: CAPESScraper.DEFAULT_HEADERS,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const html = await response.text();
+      const html = await this._fetchWithScrapingAnt(url);
       const $ = cheerio.load(html);
 
       // Determine total number of pages
@@ -333,11 +330,12 @@ export class CAPESScraper {
       // Process first page
       const pageListings = this.extractBasicArticleInfo($, theme, searchTerm);
       listings.push(...pageListings);
+      
 
       // Process remaining pages in parallel if needed
       if (totalPages > 1) {
         const pagePromises: Promise<BasicArticleInfo[]>[] = [];
-        const maxWorkers = options.max_workers || this.defaultMaxWorkers;
+        const maxWorkers = 2; // Reduced concurrency to be respectful to ScrapingAnt
         
         for (let page = 2; page <= totalPages; page++) {
           const pagePromise = this.fetchPage(searchTerm, theme, page, options);
@@ -354,6 +352,7 @@ export class CAPESScraper {
 
       return listings;
     } catch (error) {
+      console.error(`Failed to get listings for term "${searchTerm}":`, error instanceof Error ? error.message : String(error));
       return [];
     }
   }
@@ -366,25 +365,15 @@ export class CAPESScraper {
   ): Promise<BasicArticleInfo[]> {
     try {
       const pageUrl = this.constructSearchUrl(searchTerm, options, page);
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.defaultTimeout);
-
-      const response = await fetch(pageUrl, {
-        signal: controller.signal,
-        headers: CAPESScraper.DEFAULT_HEADERS,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const html = await response.text();
+      const html = await this._fetchWithScrapingAnt(pageUrl);
       const $ = cheerio.load(html);
       
-      return this.extractBasicArticleInfo($, theme, searchTerm);
+      const results = this.extractBasicArticleInfo($, theme, searchTerm);
+      
+      
+      return results;
     } catch (error) {
+      console.error(`Failed to fetch page ${page} for term "${searchTerm}":`, error instanceof Error ? error.message : String(error));
       return [];
     }
   }
@@ -393,7 +382,7 @@ export class CAPESScraper {
     articleListings: BasicArticleInfo[],
     options: SearchOptions
   ): Promise<Article[]> {
-    const maxWorkers = options.max_workers || this.defaultMaxWorkers;
+    const maxWorkers = 2; // Reduced concurrency to be respectful to ScrapingAnt
     const articles: Article[] = [];
 
     const processArticle = async (listing: BasicArticleInfo): Promise<Article | null> => {
@@ -402,7 +391,7 @@ export class CAPESScraper {
           return null;
         }
 
-        const details = await this.scrapeArticleDetail(listing.article_id, options.timeout);
+        const details = await this.scrapeArticleDetail(listing.article_id);
 
         const article: Article = {
           title: listing.title,
@@ -421,6 +410,7 @@ export class CAPESScraper {
 
         return article;
       } catch (error) {
+        console.error(`Failed to process article ${listing.article_id}:`, error instanceof Error ? error.message : String(error));
         return null;
       }
     };
@@ -504,6 +494,7 @@ export class CAPESScraper {
       }
       
     } catch (error) {
+      console.error('Failed to enrich articles with OpenAlex metrics:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -593,21 +584,7 @@ export class CAPESScraper {
     const url = this.constructSearchUrl(query, options, 1);
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.defaultTimeout);
-
-      const response = await fetch(url, {
-        signal: controller.signal,
-        headers: CAPESScraper.DEFAULT_HEADERS,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const html = await response.text();
+      const html = await this._fetchWithScrapingAnt(url);
       const $ = cheerio.load(html);
 
       // Get total found
@@ -623,12 +600,15 @@ export class CAPESScraper {
         }
       });
 
-      return {
+      const result = {
         query,
         total_found: totalFound,
         sample_titles: sampleTitles,
         filters_applied: filters,
       };
+
+
+      return result;
     } catch (error) {
       throw new Error(`Preview search failed: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -661,6 +641,7 @@ export class CAPESScraper {
         const pageArticles = await this.fetchArticleDetails(pageListings, options);
         allArticles.push(...pageArticles);
       } catch (error) {
+        console.error(`Failed to fetch batch page ${page}:`, error instanceof Error ? error.message : String(error));
         // Continue with other pages if one fails
         continue;
       }
@@ -744,7 +725,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "3.0.0",
+        tool_version: "4.0.0",
         export_timestamp: timestamp
       },
       export_info: {

@@ -43,8 +43,6 @@ export interface SearchOptions {
   max_pages?: number;
   max_results?: number;
   full_details?: boolean;
-  max_workers?: number;
-  timeout?: number;
   advanced?: boolean;
   include_metrics?: boolean;
   // Search filters

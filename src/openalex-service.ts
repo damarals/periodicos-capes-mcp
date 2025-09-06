@@ -87,6 +87,7 @@ export class OpenAlexService {
         }
       }
     } catch (error) {
+      console.error('Failed to process OpenAlex batch:', error instanceof Error ? error.message : String(error));
     }
     
     return results;
@@ -98,14 +99,20 @@ export class OpenAlexService {
    */
   private static parseOpenAlexWork(work: any): ArticleMetrics | null {
     try {
+      // Basic validation
+      if (!work || typeof work !== 'object') {
+        return null;
+      }
+
       return {
-        cited_by_count: work.cited_by_count || 0,
-        fwci: work.fwci || undefined,
-        publication_year: work.publication_year || new Date().getFullYear(),
-        is_open_access: work.open_access?.is_oa || false,
-        open_access_oa_date: work.open_access?.oa_date || undefined,
+        cited_by_count: typeof work.cited_by_count === 'number' ? work.cited_by_count : 0,
+        fwci: typeof work.fwci === 'number' ? work.fwci : undefined,
+        publication_year: typeof work.publication_year === 'number' ? work.publication_year : new Date().getFullYear(),
+        is_open_access: work.open_access?.is_oa === true,
+        open_access_oa_date: typeof work.open_access?.oa_date === 'string' ? work.open_access.oa_date : undefined,
       };
     } catch (error) {
+      console.error('Failed to parse OpenAlex work object:', error instanceof Error ? error.message : String(error));
       return null;
     }
   }

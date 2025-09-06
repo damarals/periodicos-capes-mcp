@@ -20,7 +20,7 @@ class CAPESMCPServer {
     this.server = new Server(
       {
         name: 'periodicos-capes-mcp',
-        version: '3.0.0',
+        version: '4.0.0',
       },
       {
         capabilities: {
