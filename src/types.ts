@@ -123,3 +123,26 @@ export interface ExportResult {
     filters_applied?: SearchFilters;
   };
 }
+
+// Combined search and export result for new search_articles function
+export interface SearchArticlesResult {
+  search_summary: {
+    query: string;
+    total_found: number;
+    sample_articles: Array<{
+      title: string;
+      authors: string[];
+      journal?: string;
+      year?: string;
+      is_open_access: boolean;
+      is_peer_reviewed: boolean;
+    }>;
+    filters_applied?: SearchFilters;
+  };
+  export_result: {
+    files_created: string[];
+    output_directory: string;
+    articles_exported: number;
+    format: ExportFormat;
+  };
+}

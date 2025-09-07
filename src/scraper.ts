@@ -10,6 +10,7 @@ import {
   ArticlesBatchResult,
   ExportFormat,
   ExportResult,
+  SearchArticlesResult,
 } from './types.js';
 import { QualisService } from './qualis-service.js';
 import { OpenAlexService } from './openalex-service.js';
@@ -765,6 +766,121 @@ export class CAPESScraper {
         total_found: searchResult.total_found,
         search_date: new Date().toISOString(),
         filters_applied: filters,
+      }
+    };
+  }
+
+  // NEW UNIFIED FUNCTION: Search and export articles
+  async searchArticles(
+    query: string,
+    format: ExportFormat,
+    filters?: SearchFilters,
+    maxResults?: number
+  ): Promise<SearchArticlesResult> {
+    // Step 1: Get preview for the search summary (5 articles sample)
+    const previewResult = await this.searchPreview(query, filters);
+
+    // Step 2: Get all articles for export
+    const options = this.convertFiltersToOptions(query, filters);
+    options.full_details = true; // Always get full details for export
+    options.include_metrics = true; // Include metrics for academic quality
+    
+    if (maxResults) {
+      options.max_results = maxResults;
+    }
+
+    // Use the existing search function to get all articles
+    const searchResult = await this.search(options);
+    
+    if (!searchResult.articles || searchResult.articles.length === 0) {
+      throw new Error('No articles found for export');
+    }
+
+    // Step 3: Create structured directory and export files
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const dirName = `capes_export_${timestamp}`;
+    const exportDir = path.join(process.cwd(), dirName);
+    
+    // Create directory
+    if (!fs.existsSync(exportDir)) {
+      fs.mkdirSync(exportDir, { recursive: true });
+    }
+
+    // Export articles to file
+    let exportFileResult;
+    let exportFileName;
+    
+    if (format === 'ris') {
+      exportFileResult = BibliographicExporter.exportToRISFile(searchResult.articles, exportDir);
+      exportFileName = path.basename(exportFileResult.file_path);
+    } else if (format === 'bibtex') {
+      exportFileResult = BibliographicExporter.exportToBibTeXFile(searchResult.articles, exportDir);
+      exportFileName = path.basename(exportFileResult.file_path);
+    } else {
+      throw new Error(`Unsupported export format: ${format}`);
+    }
+
+    // Create metadata.json
+    const metadata = {
+      search_metadata: {
+        query,
+        total_found: searchResult.total_found,
+        articles_exported: searchResult.articles.length,
+        search_date: new Date().toISOString(),
+        filters_applied: filters,
+        format,
+        capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
+        tool_version: "4.0.0",
+        export_timestamp: timestamp
+      },
+      export_info: {
+        directory: exportDir,
+        files: [
+          {
+            name: exportFileName,
+            type: format,
+            size_bytes: exportFileResult.file_size_bytes,
+            article_count: exportFileResult.article_count
+          },
+          {
+            name: "metadata.json",
+            type: "metadata",
+            description: "Search and export metadata for reproducibility"
+          }
+        ]
+      },
+      usage_notes: {
+        import_to_zotero: format === 'ris' ? "Import the .ris file directly into Zotero" : "Use 'Import from BibTeX' option in Zotero",
+        import_to_mendeley: format === 'ris' ? "Use 'Import RIS' option" : "Use 'Import BibTeX' option", 
+        reproducibility: "This metadata.json contains all search parameters for exact reproduction"
+      }
+    };
+
+    const metadataPath = path.join(exportDir, 'metadata.json');
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+
+    // Step 4: Create sample articles for display (from first 5 articles)
+    const sampleArticles = searchResult.articles.slice(0, 5).map(article => ({
+      title: article.title,
+      authors: article.authors,
+      journal: article.journal,
+      year: article.publication_date,
+      is_open_access: article.is_open_access,
+      is_peer_reviewed: article.is_peer_reviewed,
+    }));
+
+    return {
+      search_summary: {
+        query,
+        total_found: previewResult.total_found,
+        sample_articles: sampleArticles,
+        filters_applied: filters,
+      },
+      export_result: {
+        files_created: [exportFileName, 'metadata.json'],
+        output_directory: exportDir,
+        articles_exported: searchResult.articles.length,
+        format,
       }
     };
   }
