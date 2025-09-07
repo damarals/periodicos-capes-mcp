@@ -726,7 +726,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.0.1",
+        tool_version: "4.0.2",
         export_timestamp: timestamp
       },
       export_info: {
@@ -830,7 +830,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.0.1",
+        tool_version: "4.0.2",
         export_timestamp: timestamp
       },
       export_info: {

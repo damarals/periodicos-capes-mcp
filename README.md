@@ -62,7 +62,7 @@ claude mcp add capes periodicos-capes-mcp
 
 ## Como Usar
 
-O servidor fornece **3 funções especializadas** otimizadas para diferentes workflows acadêmicos:
+O servidor fornece **2 funções especializadas** otimizadas para diferentes workflows acadêmicos:
 
 ### 1. `preview_search` - Preview Rápido
 
@@ -101,37 +101,9 @@ Visualização rápida dos resultados para decidir se vale a pena refinar a busc
 }
 ```
 
-### 2. `get_articles` - Busca Paginada com Sorting
+### 2. `search_articles` - Busca e Export Unificados
 
-Obtenha lotes específicos de artigos com metadados completos para análise detalhada.
-
-**Parâmetros:**
-
-| Parâmetro | Tipo | Obrigatório | Padrão | Descrição |
-|-----------|------|-------------|--------|-----------|
-| `query` | string | ✓ | - | String de busca |
-| `start_index` | number | ✗ | `0` | Índice inicial (0-based) |
-| `count` | number | ✗ | `10` | Número de artigos (máx 50) |
-| `filters` | object | ✗ | - | Filtros a aplicar |
-| `sort_by` | string | ✗ | `"relevance"` | Ordenação: `"relevance"`, `"date_desc"`, `"date_asc"` |
-
-**Exemplo:**
-```json
-{
-  "query": "artificial intelligence medical",
-  "start_index": 0,
-  "count": 20,
-  "sort_by": "date_desc",
-  "filters": {
-    "year_range": [2023, 2024],
-    "open_access_only": true
-  }
-}
-```
-
-### 3. `export_search` - Export para Gerenciadores de Referência
-
-Exporte resultados para pasta estruturada com arquivo bibliográfico + metadados.
+Busca artigos no Portal CAPES e exporta automaticamente para pasta estruturada com arquivo bibliográfico + metadados.
 
 **Parâmetros:**
 

@@ -84,7 +84,7 @@ export interface SearchFilters {
   languages?: string[];
 }
 
-// Sort options for get_articles
+// Sort options
 export type SortBy = 'relevance' | 'date_desc' | 'date_asc';
 
 // Export formats
@@ -98,7 +98,7 @@ export interface SearchPreviewResult {
   filters_applied?: SearchFilters;
 }
 
-// Result for get_articles
+// Result for paginated article batches
 export interface ArticlesBatchResult {
   articles: Article[];
   total_found: number;
