@@ -269,7 +269,7 @@ export class CAPESScraper {
           metadata.issue = issueMatch[1].trim();
         }
 
-        const langMatch = text.match(/Linguagem:\s*([^;]+)/);
+        const langMatch = text.match(/Linguagem:\s*([^\n\r;]+)/);
         if (langMatch) {
           metadata.language = langMatch[1].trim();
         }
@@ -726,7 +726,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.0.2",
+        tool_version: "4.1.2",
         export_timestamp: timestamp
       },
       export_info: {
@@ -830,7 +830,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.0.2",
+        tool_version: "4.1.2",
         export_timestamp: timestamp
       },
       export_info: {
