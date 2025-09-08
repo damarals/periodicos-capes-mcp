@@ -25,36 +25,47 @@ dotenv.config();
 export class CAPESScraper {
   private static readonly BASE_URL = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html';
   private static readonly DETAIL_URL_PATTERN = 'https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id={}';
-  private readonly scrapingAntApiKey: string;
+  private readonly zyteApiKey: string;
 
   constructor() {
-    this.scrapingAntApiKey = process.env.SCRAPINGANT_API_KEY || '';
+    this.zyteApiKey = process.env.ZYTE_API_KEY || '';
   }
 
   /**
-   * Fetches HTML content using the ScrapingAnt API to bypass anti-bot measures.
+   * Fetches HTML content using the Zyte API to bypass anti-bot measures.
    * @param targetUrl The URL of the CAPES portal page to scrape.
    * @returns A promise that resolves to the HTML content of the page.
    */
-  private async _fetchWithScrapingAnt(targetUrl: string): Promise<string> {
-    if (!this.scrapingAntApiKey) {
-      throw new Error("SCRAPINGANT_API_KEY environment variable is required. Please set it in your .env file.");
+  private async _fetchWithZyte(targetUrl: string): Promise<string> {
+    if (!this.zyteApiKey) {
+      throw new Error("ZYTE_API_KEY environment variable is required. Please set it in your .env file.");
     }
 
-    const encodedUrl = encodeURIComponent(targetUrl);
-    const scrapingAntUrl = `https://api.scrapingant.com/v2/general?url=${encodedUrl}&x-api-key=${this.scrapingAntApiKey}&browser=false`;
+    const request = {
+      url: targetUrl,
+      httpResponseBody: true,
+      browserHtml: true
+    };
 
     try {
-      const response = await fetch(scrapingAntUrl);
+      const response = await fetch('https://api.zyte.com/v1/extract', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from(this.zyteApiKey + ':').toString('base64')}`
+        },
+        body: JSON.stringify(request)
+      });
 
       if (!response.ok) {
-        throw new Error(`ScrapingAnt API error: ${response.status} ${response.statusText}`);
+        throw new Error(`Zyte API error: ${response.status} ${response.statusText}`);
       }
 
-      return await response.text();
+      const data = await response.json();
+      return data.browserHtml || data.httpResponseBody;
     } catch (error) {
-      console.error(`❌ ScrapingAnt failed for ${targetUrl}:`, error instanceof Error ? error.message : String(error));
-      throw new Error(`Failed to fetch from ScrapingAnt for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`❌ Zyte failed for ${targetUrl}:`, error instanceof Error ? error.message : String(error));
+      throw new Error(`Failed to fetch from Zyte for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -222,7 +233,7 @@ export class CAPESScraper {
     const detailUrl = CAPESScraper.DETAIL_URL_PATTERN.replace('{}', articleId);
     
     try {
-      const html = await this._fetchWithScrapingAnt(detailUrl);
+      const html = await this._fetchWithZyte(detailUrl);
       const $ = cheerio.load(html);
 
       const metadata: Partial<Article> = {
@@ -299,7 +310,7 @@ export class CAPESScraper {
     const url = this.constructSearchUrl(searchTerm, options, 1);
 
     try {
-      const html = await this._fetchWithScrapingAnt(url);
+      const html = await this._fetchWithZyte(url);
       const $ = cheerio.load(html);
 
       // Determine total number of pages
@@ -316,7 +327,7 @@ export class CAPESScraper {
       // Process remaining pages in parallel if needed
       if (totalPages > 1) {
         const pagePromises: Promise<BasicArticleInfo[]>[] = [];
-        const maxWorkers = 1; // ScrapingAnt free plan allows only 1 concurrent request
+        const maxWorkers = 4; // Zyte optimal concurrency for performance
         
         for (let page = 2; page <= totalPages; page++) {
           const pagePromise = this.fetchPage(searchTerm, theme, page, options);
@@ -346,7 +357,7 @@ export class CAPESScraper {
   ): Promise<BasicArticleInfo[]> {
     try {
       const pageUrl = this.constructSearchUrl(searchTerm, options, page);
-      const html = await this._fetchWithScrapingAnt(pageUrl);
+      const html = await this._fetchWithZyte(pageUrl);
       const $ = cheerio.load(html);
       
       const results = this.extractBasicArticleInfo($, theme, searchTerm);
@@ -363,7 +374,7 @@ export class CAPESScraper {
     articleListings: BasicArticleInfo[],
     options: SearchOptions
   ): Promise<Article[]> {
-    const maxWorkers = 1; // ScrapingAnt free plan allows only 1 concurrent request
+    const maxWorkers = 4; // Zyte optimal concurrency for performance
     const articles: Article[] = [];
 
     const processArticle = async (listing: BasicArticleInfo): Promise<Article | null> => {
@@ -566,7 +577,7 @@ export class CAPESScraper {
     const url = this.constructSearchUrl(query, options, 1);
 
     try {
-      const html = await this._fetchWithScrapingAnt(url);
+      const html = await this._fetchWithZyte(url);
       const $ = cheerio.load(html);
 
       // Get total found
@@ -707,7 +718,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.2.3",
+        tool_version: "4.3.3",
         export_timestamp: timestamp
       },
       export_info: {
@@ -811,7 +822,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.2.3",
+        tool_version: "4.3.3",
         export_timestamp: timestamp
       },
       export_info: {

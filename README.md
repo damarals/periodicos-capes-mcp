@@ -19,7 +19,7 @@ O MCP Server - Periódicos CAPES implementa o protocolo Model Context Protocol p
 ## Características
 
 - 🔍 **Busca no Portal CAPES** (IEEE, ACM, Elsevier, WoS, Scopus, etc.)
-- 🛡️ **Acesso confiável**: ScrapingAnt API para bypass automático de proteções
+- 🛡️ **Acesso confiável**: Zyte API para bypass automático de proteções
 - 📈 **Métricas integradas**: OpenAlex (citações, FWCI) + Qualis (classificação brasileira)
 - 🎛️ **Filtros avançados**: tipo, acesso aberto, revisão por pares, ano, idioma
 - 📤 **Export bibliográfico**: RIS e BibTeX com pasta estruturada
@@ -34,12 +34,12 @@ npm install -g periodicos-capes-mcp
 
 **Pré-requisitos:**
 
-1. **Criar conta ScrapingAnt**: [https://scrapingant.com](https://scrapingant.com) (necessário para bypass de proteções)
+1. **Criar conta Zyte**: [https://zyte.com](https://zyte.com) (necessário para bypass de proteções)
 2. **Configurar API Key**: Adicione sua chave ao arquivo `.env`:
 
 ```bash
 # .env
-SCRAPINGANT_API_KEY="sua_chave_aqui"
+ZYTE_API_KEY="sua_chave_aqui"
 ```
 
 **Configuração Claude Code:**
