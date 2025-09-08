@@ -229,79 +229,59 @@ export class CAPESScraper {
         detail_url: detailUrl,
       };
 
-      const abstractElem = $('#item-resumo');
-      if (abstractElem.length) {
-        metadata.abstract = abstractElem.text().trim();
-      }
-      // Look for ISSN in specific patterns
-      const issnStrong = $('strong:contains("ISSN")').first();
-      if (issnStrong.length) {
-        const nextP = issnStrong.next('p');
-        if (nextP.length) {
-          metadata.issn = nextP.text().trim();
-        }
-      }
+      // CORRECTED: Abstract from meta tag (more reliable)
+      metadata.abstract = $('meta[name="abstract"]').attr('content') || 
+                         $('#item-resumo').text().trim() || undefined;
 
-      const publisherElem = $('#item-instituicao');
-      if (publisherElem.length) {
-        metadata.publisher = publisherElem.text().replace(/;$/, '').trim();
-      }
+      // CORRECTED: ISSN with direct selector
+      const issnElement = $('strong:contains("ISSN")').next('p.text-muted.mb-3.block');
+      metadata.issn = issnElement.text().trim() || undefined;
 
-      const yearElem = $('#item-ano');
-      if (yearElem.length) {
-        const yearMatch = yearElem.text().match(/(\d{4})/);
-        if (yearMatch) {
-          metadata.publication_date = yearMatch[1];
-        }
-      }
+      // CORRECTED: Publisher with direct ID selector
+      const publisherText = $('#item-instituicao').text();
+      metadata.publisher = publisherText.replace(/[;\s]*$/, '').trim() || undefined;
 
-      const pubInfo = $('p.small.text-muted');
-      if (pubInfo.length) {
-        const text = pubInfo.text();
-        
-        const volumeMatch = text.match(/Volume:\s*([^;]+)/);
-        if (volumeMatch) {
-          metadata.volume = volumeMatch[1].trim();
-        }
+      // CORRECTED: Year with direct ID selector
+      const yearText = $('#item-ano').text();
+      const yearMatch = yearText.match(/(\d{4})/);
+      metadata.publication_date = yearMatch ? yearMatch[1] : undefined;
 
-        const issueMatch = text.match(/Issue:\s*(\d+)/);
-        if (issueMatch) {
-          metadata.issue = issueMatch[1].trim();
-        }
+      // CORRECTED: Volume with direct ID selector
+      const volumeText = $('#item-volume').text();
+      metadata.volume = volumeText.replace(/Volume:\s*/, '').replace(/[;\s]*$/, '').trim() || undefined;
 
-        const langMatch = text.match(/Linguagem:\s*([^\n\r;]+)/);
-        if (langMatch) {
-          metadata.language = langMatch[1].trim();
-        }
+      // CORRECTED: Issue with direct ID selector
+      const issueText = $('#item-issue').text();
+      metadata.issue = issueText.replace(/Issue:\s*/, '').replace(/[;\s]*$/, '').trim() || undefined;
+
+      // CORRECTED: Language with direct ID selector
+      const languageText = $('#item-language').text();
+      metadata.language = languageText.replace(/Linguagem:\s*/, '').replace(/[;\s]*$/, '').trim() || undefined;
+
+      // CORRECTED: DOI from first paragraph with specific class
+      const doiText = $('p.small.text-muted.mb-3.block').first().text().trim();
+      if (doiText && doiText.startsWith('10.')) {
+        const doiMatch = doiText.match(/(10\.\d{4,}\/[^\s]+)/);
+        metadata.doi = doiMatch ? doiMatch[1] : undefined;
       }
 
+      // CORRECTED: Open Access with text search
+      metadata.is_open_access = $('*:contains("Acesso aberto")').length > 0 ||
+                                $('.text-green-cool-vivid-50').length > 0;
 
-      metadata.is_open_access = $('.text-green-cool-vivid-50').length > 0;
+      // CORRECTED: Peer Review with text search  
+      metadata.is_peer_reviewed = $('*:contains("Revisado por pares")').length > 0 ||
+                                  $('.text-violet-50').length > 0;
 
-      metadata.is_peer_reviewed = $('.text-violet-50').length > 0;
-
+      // CORRECTED: Authors with specific class selector
       const authors: string[] = [];
-      $('.view-autor').each((_, elem) => {
+      $('a.view-autor.fst-italic').each((_, elem) => {
         const authorText = $(elem).text().trim();
         if (authorText) {
           authors.push(authorText);
         }
       });
-      if (authors.length > 0) {
-        metadata.authors = authors;
-      }
-
-      $('a[href^="http"]').each((_, elem) => {
-        const href = $(elem).attr('href');
-        if (href) {
-          const doi = this.extractDoi(href);
-          if (doi) {
-            metadata.doi = doi;
-            return false; // Stop at first match
-          }
-        }
-      });
-
+      metadata.authors = authors.length > 0 ? authors : undefined;
 
       return metadata;
     } catch (error) {
@@ -726,7 +706,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.1.2",
+        tool_version: "4.2.2",
         export_timestamp: timestamp
       },
       export_info: {
@@ -830,7 +810,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.1.2",
+        tool_version: "4.2.2",
         export_timestamp: timestamp
       },
       export_info: {

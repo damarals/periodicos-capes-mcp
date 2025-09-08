@@ -1,0 +1,400 @@
+.highContrast {
+    --color-altoContraste-01: black;
+    --color-altoContraste-02: white;
+    --color-altoContraste-03: yellow;
+    --color-altoContraste-04: #3d4551;
+
+    --color-support-03: var(--color-altoContraste-02);
+    --color-secondary-08: var(--color-altoContraste-02);
+
+    --color: var(--color-altoContraste-02);
+    --color-light: var(--color-altoContraste-02);
+
+    --gray-5: var(--color-altoContraste-01);
+    --pure-0: var(--color-altoContraste-01);
+    --color-dark: var(--color-altoContraste-01);
+    --bg-color: var(--color-altoContraste-01);
+    --background-light: var(--color-altoContraste-01);
+    --color-secondary-02: var(--color-altoContraste-01);
+
+    --interactive: var(--color-altoContraste-03);
+    --interactive-light: var(--color-altoContraste-03);
+    --interactive-dark: var(--color-altoContraste-03);
+    --active: var(--color-altoContraste-03);
+    --on: var(--color-altoContraste-03);
+    --selected: var(--color-altoContraste-03);
+    --blue-warm-vivid-80: var(--color-altoContraste-01);
+    --gray-3: var(--color-altoContraste-04);
+    --gray-2: var(--color-altoContraste-04);
+    --pure-0: var(--color-altoContraste-03);
+    --border-color: var(--color-altoContraste-03);
+    --bs-link-color: var(--color-altoContraste-03);
+
+}
+
+.highContrast .news-content{
+    background-color: var(--color-altoContraste-04) !important;
+}
+
+.highContrast #card-login{
+    background-color: var(--color-altoContraste-01) !important;
+    border: solid 1px var(--color-altoContraste-03) !important;
+}
+
+.highContrast #card-login .card-title, .highContrast #card-login label{
+    color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast #card-login small{
+    color: var(--color-altoContraste-02) !important;
+}
+
+.highContrast #escopo-busca{
+    color: var(--color-altoContraste-03);
+    background-color: var(--color-altoContraste-04);
+}
+
+.highContrast .border {
+    border: solid 1px var(--color-altoContraste-03) !important;
+}
+
+.highContrast .title-home {
+    color: var(--color-altoContraste-01);
+}
+
+.highContrast #input-busca-home{
+    color: var(--color-altoContraste-03);
+    background-color: var(--color-altoContraste-01);
+}
+
+.highContrast,
+.highContrast .br-item,
+.highContrast .br-list {
+    background-color: var(--color-altoContraste-01) !important;
+}
+
+.highContrast header {
+    background-color: var(--color-altoContraste-01) !important;
+    border-bottom: 1px solid var(--color-altoContraste-02) !important;
+}
+
+.highContrast .br-tag {
+    background-color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast footer,
+.highContrast .header-title,
+.highContrast .header-subtitle,
+.highContrast .header-sign {
+    background-color: transparent;
+}
+
+.highContrast .header-title,
+.highContrast .header-subtitle,
+.highContrast .header-sign {
+    color: var(--color-altoContraste-02) !important;
+}
+
+/*sidemenu*/
+.highContrast .menu-item,
+.highContrast .br-menu .menu-item{
+    background-color: var(--color-altoContraste-01);
+}
+
+.highContrast .menu-panel {
+    border-right: 1px solid;
+}
+
+/*br-sign-in*/
+.highContrast .br-sign-in {
+    background-color: var(--color-altoContraste-03) !important;
+    color: var(--color-altoContraste-01) !important;
+    border: 1px solid var(--color-altoContraste-03) !important;
+    text-decoration: none !important;
+}
+
+.highContrast .br-sign-in:hover {
+    background-color: var(--color-altoContraste-01) !important;
+    color: var(--color-altoContraste-03) !important;
+    border: 1px solid var(--color-altoContraste-03) !important;
+    text-decoration: none !important;
+}
+
+.highContrast .br-sign-in:not(:disabled):not(:disabled):hover {
+    background-image: none;
+}
+
+/*br-button*/
+.highContrast .br-button:hover {
+    background-color: var(--color-altoContraste-01) !important;
+    background-image: none;
+    color: var(--color-altoContraste-03) !important;
+    border: 1px solid var(--color-altoContraste-03) !important;
+    text-decoration: none !important;
+}
+
+.highContrast .br-button:not(:disabled):not(:disabled):hover {
+    background-image: none;
+}
+
+
+
+
+/*text-color*/
+.highContrast .text-info,
+.highContrast .text-success,
+.highContrast .text-danger {
+    color: var(--color-altoContraste-02) !important;
+}
+
+/*input*/
+.highContrast .header-search {
+    background-color: transparent;
+}
+
+.highContrast #searchbox,
+.highContrast .br-input input {
+    background-color: var(--color-altoContraste-01) !important;
+    border: 1px solid var(--color-altoContraste-02) !important;
+    color: var(--color-altoContraste-02) !important;
+}
+
+.highContrast ::placeholder {
+    color: var(--color-altoContraste-02) !important;
+    opacity: 1;
+    /* Firefox */
+}
+
+.highContrast ::-ms-input-placeholder {
+    /* Edge 12-18 */
+    color: var(--color-altoContraste-02) !important;
+}
+
+/*br-card*/
+.highContrast .br-card {
+    background-color: var(--color-altoContraste-01) !important;
+    border: 1px solid var(--color-altoContraste-02) !important;
+    color: var(--color-altoContraste-02) !important;
+}
+
+/**/
+.highContrast .br-item.active a {
+    background-image: none;
+    background-color: var(--color-altoContraste-03) !important;
+    color: var(--color-altoContraste-01) !important;
+}
+
+.highContrast .br-item a:hover {
+    background-image: none;
+    background-color: var(--color-altoContraste-03) !important;
+    color: var(--color-altoContraste-01) !important;
+}
+
+
+
+/*mensagem de alerta*/
+.highContrast .feedback.is-warning,
+.highContrast .feedback.warning,
+.feedback[warning] {
+    background-color: var(--color-altoContraste-01);
+    color: var(--color-altoContraste-02);
+}
+
+.highContrast .br-list .br-checkbox label {
+    color: var(--color-altoContraste-02);
+}
+
+.highContrast .br-select .br-item .br-radio input+label {
+    color: var(--color-altoContraste-02);
+}
+
+
+
+
+.highContrast a {
+    color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast .buttonCard:hover {
+    color: var(--color-altoContraste-01) !important;
+    background-image: none;
+}
+
+
+
+/*
+
+
+.highContrast legend,
+.highContrast label,
+.highContrast h1,
+.highContrast h2,
+.highContrast h3,
+.highContrast h4,
+.highContrast h5,
+.highContrast h6,
+.highContrast p,
+.highContrast .br-breadcrumb .crumb-list .crumb[data-active=active] span {
+color: var(--color-altoContraste-02) !important;
+}
+.highContrast a{
+color: var(--color-altoContraste-03) !important;
+text-decoration: underline !important;
+}
+.highContrast a:hover{
+background-image: none;
+}
+.highContrast .br-button, .highContrast .br-button .circle {
+background-color: var(--color-altoContraste-01) !important;
+color: var(--color-altoContraste-03) !important;
+border: 1px solid var(--color-altoContraste-03) !important;
+}
+.highContrast .br-button:hover, .highContrast .br-button .circle:hover {
+background-color: var(--color-altoContraste-03) !important;
+color: var(--color-altoContraste-01) !important;
+border: 1px solid var(--color-altoContraste-03) !important;
+}
+.highContrast .br-breadcrumb .crumb-list li .crumb a{
+background-color: var(--color-altoContraste-01) !important;
+color: var(--color-altoContraste-03) !important;
+}
+.highContrast .menu-panel, .highContrast .menu-folder .menu-item{
+background-color: var(--color-altoContraste-01) !important;
+}
+.highContrast .menu-item a{
+text-decoration: underline !important;
+background-color: var(--color-altoContraste-01) !important;
+color: var(--color-altoContraste-03) !important;
+}
+.highContrast .br-item a{
+text-decoration: underline !important;
+background-color: var(--color-altoContraste-01) !important;
+color: var(--color-altoContraste-03) !important;
+}
+.highContrast .br-card a{
+color: var(--color-altoContraste-03) !important;
+}
+.highContrast .card-header{
+background-color: var(--color-altoContraste-01) !important;
+}
+.highContrast .br-card .hover a:hover{
+background-color: var(--color-altoContraste-03) !important;
+color: var(--color-altoContraste-01) !important;
+}
+
+
+.highContrast .bgCinza{
+background-color: var(--color-altoContraste-01) !important;
+border-bottom: 1px solid var(--color-altoContraste-02) !important;
+}
+/*Accordion*/
+.highContrast .br-accordion {
+    background-color: var(--color-altoContraste-01) !important;
+}
+
+.highContrast .br-accordion .header {
+    color: var(--color-altoContraste-03) !important;
+
+    /*Datetimepicker*/
+}
+
+.highContrast .flatpickr-calendar {
+    background-color: var(--color-altoContraste-01) !important;
+    border: 1px solid var(--color-altoContraste-02) !important;
+}
+
+.highContrast .flatpickr-day {
+    color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast .flatpickr-calendar .flatpickr-day.selected {
+    background-color: var(--color-altoContraste-02) !important;
+    color: var(--color-altoContraste-01) !important;
+}
+
+.highContrast .flatpickr-calendar .flatpickr-day.today {
+    background-color: var(--color-altoContraste-01) !important;
+    color: var(--color-altoContraste-02) !important;
+    border: 1px solid var(--color-altoContraste-02) !important;
+}
+
+.highContrast .flatpickr-calendar span.flatpickr-weekday {
+    color: var(--color-altoContraste-02) !important;
+}
+
+.highContrast .flatpickr-monthDropdown-months {
+    color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast .numInput {
+    background-color: var(--color-altoContraste-01) !important;
+    color: var(--color-altoContraste-02) !important;
+}
+
+/*wizard*/
+.highContrast .wizard-progress,
+.highContrast .br-wizard .wizard-form .wizard-panel .wizard-panel-btn {
+    background-color: var(--color-altoContraste-01) !important;
+    color: var(--color-altoContraste-02) !important;
+    border: 1px solid var(--color-altoContraste-02) !important;
+}
+
+.highContrast .wizard-progress .wizard-progress-btn .info {
+    color: var(--color-altoContraste-03);
+}
+
+.highContrast .br-wizard .wizard-progress .wizard-progress-btn[active]::before {
+    background-color: var(--color-altoContraste-03) !important;
+    color: var(--color-altoContraste-01) !important;
+    border: 1px solid var(--color-altoContraste-03) !important;
+}
+
+.highContrast .br-wizard .wizard-progress .wizard-progress-btn::before {
+    background-color: var(--color-altoContraste-01) !important;
+    color: var(--color-altoContraste-03) !important;
+    border: 1px solid var(--color-altoContraste-03) !important;
+}
+
+/**/
+.highContrast code {
+    color: var(--color-altoContraste-01);
+    background-color: var(--color-altoContraste-02);
+}
+
+.highContrast .menu-item .active{
+    color: var(--color-altoContraste-02);
+}
+.highContrast .menu-footer,
+.highContrast .menu-header{
+    background-color: var(--color-altoContraste-01);
+}
+
+.highContrast .br-menu a.menu-item.active{
+    color: var(--color-altoContraste-01) !important;
+    font-weight: bold;
+}
+
+.highContrast .br-menu .menu-body .drop-menu.active>.menu-item{
+    background-color: var(--color-altoContraste-03) !important;
+    color: var(--color-altoContraste-01) !important;
+    font-weight: bold;
+}
+
+.highContrast .info{
+    color: var(--color-altoContraste-02) !important;
+}
+
+.result-busca .br-item.selected{
+    background-color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast .br-button.primary{
+    color: var(--color-altoContraste-01) !important;
+}
+.highContrast .br-button.primary:hover{
+    color: var(--color-altoContraste-03) !important;
+}
+
+.highContrast .search-container, .highContrast .search-container select {
+    background-color: var(--color-altoContraste-01) !important;
+}

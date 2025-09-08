@@ -1,0 +1,95 @@
+TY  - JOUR
+TI  - A spatial causal analysis of wildland fire-contributed PM2.5 using numerical model output
+AU  - Alexandra Larsen
+AU  - Shu Yang
+AU  - Brian J. Reich
+AU  - Ana G. Rappold
+PY  - 2022
+VL  - 16
+IS  - 4
+AB  - Wildland fire smoke contains hazardous levels of fine particulate matter (PM2.5), a pollutant shown to adversely effect health. Estimating fire attributable PM2.5 concentrations is key to quantifying the impact on air quality and subsequent health burden. This is a challenging problem since only total PM2.5 is measured at monitoring stations and both fire-attributable PM2.5 and PM2.5 from all other sources are correlated in space and time. We propose a framework for estimating fire-contributed PM2.5 and PM2.5 from all other sources using a novel causal inference framework and bias-adjusted chemical model representations of PM2.5 under counterfactual scenarios. The chemical model representation of PM2.5 for this analysis is simulated using Community Multiscale Air Quality Modeling System (CMAQ), run with and without fire emissions across the contiguous U.S. for the 2008–2012 wildfire seasons. The CMAQ output is calibrated with observations from monitoring sites for the same spatial domain and time period. We use a Bayesian model that accounts for spatial variation to estimate the effect of wildland fires on PM2.5 and state assumptions under which the estimate has a valid causal interpretation. Our results include estimates of the contributions of wildfire smoke to PM2.5 for the contiguous U.S. Additionally, we compute the health burden associated with the PM2.5 attributable to wildfire smoke.
+DO  - 10.1214/22-aoas1610
+SN  - 1941-7330
+PB  - Institute of Mathematical Statistics
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=Aspatialcaus
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: Aspatialcaus
+ER  - 
+
+TY  - JOUR
+TI  - Bayesian mitigation of spatial coarsening for a Hawkes model applied to gunfire, wildfire and viral contagion
+AU  - Andrew J. Holbrook
+AU  - Xiang Ji
+AU  - Marc A. Suchard
+PY  - 2022
+VL  - 16
+IS  - 1
+AB  - Self-exciting spatiotemporal Hawkes processes have found increasing use in the study of large-scale public health threats, ranging from gun violence and earthquakes to wildfires and viral contagion. Whereas many such applications feature locational uncertainty, that is, the exact spatial positions of individual events are unknown, most Hawkes model analyses to date have ignored spatial coarsening present in the data. Three particular 21st century public health crises-urban gun violence, rural wildfires and global viral spread-present qualitatively and quantitatively varying uncertainty regimes that exhibit: (a) different collective magnitudes of spatial coarsening, (b) uniform and mixed magnitude coarsening, (c) differently shaped uncertainty regions and-less orthodox-(d) locational data distributed within the "wrong" effective space. We explicitly model such uncertainties in a Bayesian manner and jointly infer unknown locations together with all parameters of a reasonably flexible Hawkes model, obtaining results that are practically and statistically distinct from those obtained while ignoring spatial coarsening. This work also features two different secondary contributions: first, to facilitate Bayesian inference of locations and background rate parameters, we make a subtle yet crucial change to an established kernel-based rate model, and second, to facilitate the same Bayesian inference at scale, we develop a massively parallel implementation of the model's log-likelihood gradient with respect to locations and thus avoid its quadratic computational cost in the context of Hamiltonian Monte Carlo. Our examples involve thousands of observations and allow us to demonstrate practicality at moderate scales.
+DO  - 10.1214/21-aoas1517
+SN  - 1941-7330
+PB  - Institute of Mathematical Statistics
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=Bayesianmiti
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: Bayesianmiti
+ER  - 
+
+TY  - JOUR
+TI  - Drought-related wildfire accounts for one-third of the forest wildfires in subtropical China
+AU  - Jianpeng Yin
+AU  - Binbin He
+AU  - Chunquan Fan
+AU  - Rui Chen
+AU  - Hongguo Zhang
+AU  - Yiru Zhang
+PY  - 2024
+VL  - 346
+AB  - The threat of wildfires to human safety and ecosystem services is widely known to increase due to climate change characterized by drought. In subtropical China, seasonal drought during the non-monsoon period contributes to increase of fire risk. However, both the relationship between drought and wildfire and the extent of drought effect are poorly understood. Based on satellite active fire detections and monthly drought metrics, we quantified the impact of drought on forest wildfire frequency in subtropical China during 2001–2020, using a Bayesian hierarchical modelling framework. We observed excess wildfire, defined here as above normal wildfire activity level, is significantly correlated to drought across subtropical China, and drought-wildfire relationship showed threshold behavior that the probability of excess wildfire increased significantly when the vapor pressure deficit (VPD) crossed 0.24 standard deviations of its long-term average. From 2001 to 2020, excess wildfire caused by drought accounted for approximately 31 % of the total number of forest fire points during the fire season (November to May). The drought-related excess wildfire was concentrated in 2007–2010 and 2014, and their spatial distribution showed a dipole between the western and eastern subtropical China in individual years. Moreover, we evaluated the spatiotemporal sensitivity of wildfire to drought by Bayesian model coefficients. There was higher sensitivity than average level of the entire region in 54 % of subtropical China, especially in northwestern Yunnan. Our results indicate that drought plays a dominant role on wildfire regime at the regional scale in subtropical China. As the drying trend intensifies in the future, wildfires will show different patterns due to the large differences in the sensitivity of wildfire to drought in subtropical China.
+DO  - 10.1016/j.agrformet.2024.109893
+SN  - 1873-2240
+PB  - Elsevier BV
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=Droughtrelat
+KW  - bayesian wildfire spatial
+N1  - Peer Reviewed; CAPES ID: Droughtrelat
+ER  - 
+
+TY  - JOUR
+TI  - Spatial Heterogeneity of the Respiratory Health Impacts of Wildfire Smoke PM 2.5  in California
+AU  - Viet Do
+AU  - Chen Chen
+AU  - Tarik Benmarhnia
+AU  - Joan A. Casey
+PY  - 2024
+VL  - 8
+IS  - 4
+AB  - Abstract Wildfire smoke fine particles (PM 2.5 ) are a growing public health threat as wildfire events become more common and intense under climate change, especially in the Western United States. Studies assessing the association between wildfire PM 2.5 exposure and health typically summarize the effects over the study area. However, health responses to wildfire PM 2.5 may vary spatially. We evaluated spatially‐varying respiratory acute care utilization risks associated with short‐term exposure to wildfire PM 2.5 and explored community characteristics possibly driving spatial heterogeneity. Using ensemble‐modeled daily wildfire PM 2.5 , we defined a wildfire smoke day to have wildfire‐specific PM 2.5 concentration ≥15 μg/m 3 . We included daily respiratory emergency department visits and unplanned hospitalizations in 1,396 California ZIP Code Tabulation Areas (ZCTAs) and 15 census‐derived community characteristics. Employing a case‐crossover design and conditional logistic regression, we observed increased odds of respiratory acute care utilization on wildfire smoke days at the state level (odds ratio [OR] = 1.06, 95% confidence interval [CI]: 1.05, 1.07). Across air basins, ORs ranged from 0.88 to 1.57, with the highest effect estimate in San Diego. A within‐community matching design and spatial Bayesian hierarchical model also revealed spatial heterogeneity in ZCTA‐level rate differences. For example, communities with a higher percentage of Black or Pacific Islander residents had stronger wildfire PM 2.5 ‐outcome relationships, while more air conditioning and tree canopy attenuated associations. We found an important heterogeneity in wildfire smoke‐related health impacts across air basins, counties, and ZCTAs, and we identified characteristics of vulnerable communities, providing evidence to guide policy development and resource allocation.
+DO  - 10.1029/2023gh000997
+SN  - 2471-1403
+PB  - Wiley
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=SpatialHeter
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: SpatialHeter
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire Risk Assessment for Strategic Forest Management in the Southern United States: A Bayesian Network Modeling Approach
+AU  - Sandhya Nepal
+AU  - Lars Y. Pomara
+AU  - Nicholas P. Gould
+AU  - Danny C. Lee
+PY  - 2023
+VL  - 12
+IS  - 12
+AB  - Wildfire occurrences have increased and are projected to continue increasing globally. Strategic, evidence-based planning with diverse stakeholders, making use of diverse ecological and social data, is crucial for confronting and mitigating the associated risks. Prescribed fire, when planned and executed carefully, is a key management tool in this effort. Assessing where prescribed fire can be a particularly effective forest management tool can help prioritize efforts, reduce wildfire risk, and support fire-resilient lands and communities. We collaborated with expert stakeholders to develop a Bayesian network model that integrated a large variety of biophysical, socioecological, and socioeconomic spatial information for the Southeastern United States to quantify where risk is high and where prescribed fire would be efficient in mitigating risk. The model first estimated wildfire risk based on landscape-scale interactions among the likelihoods of fire occurrence and severity and the people and resources potentially exposed—accounting for socioeconomic vulnerabilities as well as key ecosystem services. The model then quantified the potential for risk reduction through prescribed fire, given the existing fuel load, climate, and other landscape conditions. The resulting expected risk estimates show high risk concentrated in the coastal plain and interior highland subregions of the Southern US, but there was considerable variation among risks to different ecosystem services and populations, including potential exposure to smoke emissions. The capacity to reduce risk through fuel reductions was spatially correlated with risk; where these diverged, the difference was largely explained by fuel load. We suggest that both risk and the capacity for risk reduction are important in identifying priorities for management interventions. The model serves as a decision support tool for stakeholders to coordinate large-landscape adaptive management initiatives in the Southern US. The model is flexible with regard to both empirical and expert-driven parameterizations and can be updated as new knowledge and data emerge. The resulting spatial information can help connect active management options to forest management goals and make management more efficient through targeted investments in priority landscapes.
+DO  - 10.3390/land12122172
+SN  - 2073-445X
+PB  - Multidisciplinary Digital Publishing Institute
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=WildfireRisk
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: WildfireRisk
+ER  - 
+
