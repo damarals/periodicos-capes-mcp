@@ -43,8 +43,7 @@ export class CAPESScraper {
 
     const request = {
       url: targetUrl,
-      httpResponseBody: true,
-      browserHtml: true
+      httpResponseBody: true
     };
 
     try {
@@ -62,7 +61,7 @@ export class CAPESScraper {
       }
 
       const data = await response.json();
-      return data.browserHtml || data.httpResponseBody;
+      return data.httpResponseBody;
     } catch (error) {
       console.error(`❌ Zyte failed for ${targetUrl}:`, error instanceof Error ? error.message : String(error));
       throw new Error(`Failed to fetch from Zyte for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
@@ -718,7 +717,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.3.3",
+        tool_version: "4.3.4",
         export_timestamp: timestamp
       },
       export_info: {
@@ -822,7 +821,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.3.3",
+        tool_version: "4.3.4",
         export_timestamp: timestamp
       },
       export_info: {
