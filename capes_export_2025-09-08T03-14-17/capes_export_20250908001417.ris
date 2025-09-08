@@ -1,0 +1,160 @@
+TY  - JOUR
+TI  - Respiratory hospitalizations and wildfire smoke: a spatiotemporal analysis of an extreme firestorm in San Diego County, California
+AU  - Rosana Aguilera
+AU  - Kristen Hansen
+AU  - Alexander Gershunov
+AU  - Sindana D. Ilango
+AU  - Paige Sheridan
+AU  - Tarik Benmarhnia
+PY  - 2020
+T2  - Environmental Epidemiology
+JF  - Environmental Epidemiology
+VL  - 4
+IS  - 5
+AB  - Background: Wildfire smoke adversely impacts respiratory health as fine particles can penetrate deeply into the lungs. Epidemiological studies of differential impacts typically target population subgroups in terms of vulnerability to wildfire smoke. Such information is useful to customize smoke warnings and mitigation actions for specific groups of individuals. In addition to individual vulnerability, it is also important to assess spatial patterns of health impacts to identify vulnerable communities and tailor public health actions during wildfire smoke events. Methods: We assess the spatiotemporal variation in respiratory hospitalizations in San Diego County during a set of major wildfires in 2007, which led to a substantial public health burden. We propose a spatial within-community matched design analysis, adapted to the study of wildfire impacts, coupled with a Bayesian Hierarchical Model, that explicitly considers the spatial variation of respiratory health associated with smoke exposure, compared to reference periods before and after wildfires. We estimate the signal-to-noise ratio to ultimately gauge the precision of the Bayesian model output. Results: We find the highest excess hospitalizations in areas covered by smoke, mainly ZIP codes contained by and immediately downwind of wildfire perimeters, and that excess hospitalizations tend to follow the distribution of smoke plumes across space (ZIP codes) and time (days). Conclusions: Analyzing the spatiotemporal evolution of exposure to wildfire smoke is necessary due to variations in smoke plume extent, particularly in this region where the most damaging wildfires are associated with strong wind conditions.
+DO  - 10.1097/ee9.0000000000000114
+SN  - 2474-7882
+PB  - Wolters Kluwer
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3090353914
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W3090353914
+ER  - 
+
+TY  - JOUR
+TI  - Bayesian mitigation of spatial coarsening for a Hawkes model applied to gunfire, wildfire and viral contagion
+T2  - The Annals of Applied Statistics
+JF  - The Annals of Applied Statistics
+PB  - Institute of Mathematical Statistics
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3182907019
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W3182907019
+ER  - 
+
+TY  - JOUR
+TI  - Optimized stratification approach enhances the weight-of-evidence method: Transparently uncovering wildfire probability and drivers-wildfire relationships in the southwest mountains of China
+AU  - Wang Wen-quan
+AU  - Xiang‐Yang Fang
+AU  - Xiaoyan Wei
+AU  - Jiangxia Ye
+PY  - 2023
+T2  - Ecological Indicators
+JF  - Ecological Indicators
+VL  - 158
+AB  - The mountainous region of southwest China serves as a significant treasure for resources and ecological security. Due to its topographic heterogeneity and cultural diversity, the wildfire regime in this area exhibits unique features. To uncover the distinct mechanisms that drive wildfire incidents and assess their occurrence probability, an enhanced weight-of-evidence (WofE) method was proposed by improving the stratification of evidence layers. This approach seeks to heighten effectiveness while maintaining procedural transparency and robustness. In our case study focusing on Yunnan Province, we extracted wildfire data from medium-resolution remote sensing imagery from 2006 to 2020. Various wildfire drivers were considered including wildfire environment, fuel conditions, and ignition sources. We utilized the WofE method grounded on Bayesian principles to clearly calculate the spatial association strength between these drivers and wildfires, thereby developing a reliable wildfire occurrence probability map. To enhance the explanatory power of the drivers within the WofE method, a discretization method based on the theory of spatial stratified heterogeneity was incorporated. Our results suggested that the WofE method can be optimized using the spatial stratified heterogeneity measured via GeoDetector, leading to an improved solution. Implementing optimized discrete drivers amplified the spatial explanatory power of wildfires by an average of 7.55%, supporting their inclusion as evidence layers within the WofE method. The optimized discrete WofE method yielded a wildfire occurrence probability map with an Area Under the Curve (AUC) value of 0.91, indicating high predictive accuracy. This map revealed notable spatial clustering and regional variations in wildfire occurrences across Yunnan Province. Additionally, we observed variable spatial correlation between each driver and wildfire occurrence, and the wildfire drivers indicative of ignition sources characteristics were relatively more dominant locally. This research contributes valuable insights towards enhancing the WofE method and provides a helpful reference for local wildfire management practices and resource allocation strategies.
+DO  - 10.1016/j.ecolind.2023.111500
+SN  - 1872-7034
+PB  - Elsevier BV
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4390379337
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W4390379337
+ER  - 
+
+TY  - JOUR
+TI  - Spatial Heterogeneity of the Respiratory Health Impacts of Wildfire Smoke PM 2.5  in California
+T2  - GeoHealth
+JF  - GeoHealth
+PB  - Wiley
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4393314653
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4393314653
+ER  - 
+
+TY  - JOUR
+TI  - A combined statistical and machine learning approach for spatial prediction of extreme wildfire frequencies and sizes
+T2  - Extremes
+JF  - Extremes
+PB  - Springer Science+Business Media
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4321437682
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4321437682
+ER  - 
+
+TY  - JOUR
+TI  - A spatial causal analysis of wildland fire-contributed PM2.5 using numerical model output
+AU  - Alexandra Larsen
+AU  - Shu Yang
+AU  - Brian J. Reich
+AU  - Ana G. Rappold
+PY  - 2022
+T2  - The Annals of Applied Statistics
+JF  - The Annals of Applied Statistics
+VL  - 16
+IS  - 4
+AB  - Wildland fire smoke contains hazardous levels of fine particulate matter (PM2.5), a pollutant shown to adversely effect health. Estimating fire attributable PM2.5 concentrations is key to quantifying the impact on air quality and subsequent health burden. This is a challenging problem since only total PM2.5 is measured at monitoring stations and both fire-attributable PM2.5 and PM2.5 from all other sources are correlated in space and time. We propose a framework for estimating fire-contributed PM2.5 and PM2.5 from all other sources using a novel causal inference framework and bias-adjusted chemical model representations of PM2.5 under counterfactual scenarios. The chemical model representation of PM2.5 for this analysis is simulated using Community Multiscale Air Quality Modeling System (CMAQ), run with and without fire emissions across the contiguous U.S. for the 2008–2012 wildfire seasons. The CMAQ output is calibrated with observations from monitoring sites for the same spatial domain and time period. We use a Bayesian model that accounts for spatial variation to estimate the effect of wildland fires on PM2.5 and state assumptions under which the estimate has a valid causal interpretation. Our results include estimates of the contributions of wildfire smoke to PM2.5 for the contiguous U.S. Additionally, we compute the health burden associated with the PM2.5 attributable to wildfire smoke.
+DO  - 10.1214/22-aoas1610
+SN  - 1941-7330
+PB  - Institute of Mathematical Statistics
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3012162383
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W3012162383
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire Risk Assessment for Strategic Forest Management in the Southern United States: A Bayesian Network Modeling Approach
+T2  - Land
+JF  - Land
+PB  - Multidisciplinary Digital Publishing Institute
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4389919031
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4389919031
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire and spruce beetle outbreak have mixed effects on below‐canopy temperatures in a Rocky Mountain subalpine forest
+AU  - Amanda R. Carlson
+AU  - Jason S. Sibold
+AU  - José F. Negrón
+PY  - 2020
+T2  - Journal of Biogeography
+JF  - Journal of Biogeography
+VL  - 48
+IS  - 1
+AB  - Abstract Aim Fine‐scale topography and canopy cover can play an important role in mediating effects of regional‐scale climate change on the below‐canopy environment in mountain forests. The aim of this study was to determine how below‐canopy temperatures in a high‐elevation Rocky Mountain forest have been affected by canopy change resulting from severe wildfire and spruce beetle outbreak within the last 10–15 years. Location Eastern San Juan Mountains, Colorado, USA. Taxon Picea engelmannii , Abies lasiocarpa , Dendroctonus rufipennis . Methods We used a network of sensors to record temperatures for a full year in burned and beetle‐impacted areas. Using a Bayesian model that accounted for spatial structure in temperatures, we derived covariate parameters to determine the relative influence of topographic variables (elevation, aspect, slope, topographic position and solar radiation), live tree basal area and burned/unburned status on average daily maximum and minimum temperatures (Tmax, Tmin) in summer and winter. Results Model parameters indicated that burned areas were warmer than unburned forest, with three of four average temperature variables (summer Tmax, winter Tmax, and winter Tmin) having &gt;95% likelihood of a positive temperature difference in burned versus unburned locations. Mean temperature changes for these variables ranged from 0.41 to 0.74°C. Conversely, canopy loss in unburned, beetle‐killed forests did not meaningfully affect Tmax but resulted in slight cooling of Tmin. Modelled temperature changes resulting from 100% overstorey mortality were −1.29°C for summer Tmin (95% credible interval: −0.027 to −2.56°C) and −1.31°C for winter Tmin (95% credible interval: 0.17 to −2.79°C). Main Conclusions Our results indicate that severe wildfire may exacerbate effects of climate change and increase the probability of ecosystem transitions. However, the effects of bark beetle outbreaks are more complex. Cooling of overnight minimum temperatures may counteract warming trends, but an increase in diurnal temperature ranges may have uncertain ecological consequences.
+DO  - 10.1111/jbi.13994
+SN  - 1365-2699
+PB  - Wiley
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3094626469
+KW  - bayesian wildfire spatial
+N1  - Peer Reviewed; CAPES ID: W3094626469
+ER  - 
+
+TY  - JOUR
+TI  - Drought-related wildfire accounts for one-third of the forest wildfires in subtropical China
+T2  - Agricultural and Forest Meteorology
+JF  - Agricultural and Forest Meteorology
+PB  - Elsevier BV
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4390927801
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4390927801
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire Risk Assessment in Liangshan Prefecture, China Based on An Integration Machine Learning Algorithm
+AU  - Lingxiao Xie
+AU  - Rui Zhang
+AU  - Junyu Zhan
+AU  - Song Li
+AU  - Age Shama
+AU  - Runqing Zhan
+AU  - Ting Wang
+AU  - Jichao Lv
+AU  - Xin Bao
+AU  - Renzhe Wu
+PY  - 2022
+T2  - Remote Sensing
+JF  - Remote Sensing
+VL  - 14
+IS  - 18
+AB  - Previous wildfire risk assessments have problems such as subjectivity of weight allocation and the linearization of statistical models, resulting in generally low robustness and low generalization ability of fire risk assessment models. Therefore, in this paper, we explored the potential of integration machine learning algorithms to build wildfire risk assessment models. Based on analyzing fire data’s spatial and temporal distribution, we selected 10 triggering factors of topography, meteorology, vegetation, and human activities, using frequency ratio (FR) to provide uniform data representation of triggering factors. Next, we used the Bayesian optimization (BO) algorithm to perform hyperparametric optimization solutions for various machine learning models: support vector machine (SVM), random forest (RF), and extreme gradient boosting (XGBoost). Finally, we constructed an integration machine learning algorithm to acquire a fire risk grading map and the importance evaluation corresponding to each triggering factor. For validation purposes, we selected Liangshan Prefecture in Sichuan Province as the specific study area and obtained MCD64A1 burned area product to extract the extent of burned areas in Liangshan Prefecture from 2011 to 2020. The accuracy, kappa coefficient, and area under curve (AUC) were then applied to assess the predictive power and consistency of the fire risk classification maps. The experimental analysis showed that among the three models, FR-BO-XGBoost had the best performance in wildfire risk assessment in the Liangshan region (AUC = 0.887), followed by FR-BO-RF (AUC = 0.876) and FR-BO-SVM (AUC = 0.820). The feature importance result indicated that the study area’s most significant effects on wildfires were precipitation, NDVI, land cover, and maximum temperature. The proposed method avoided the subjective weighting and model linearization problems. Compared with the previous methods, it automatically acquired the importance of the triggering factors to the wildfire, which had certain advantages in wildfire risk assessment, and was worthy of further promotion.
+DO  - 10.3390/rs14184592
+SN  - 2072-4292
+PB  - Multidisciplinary Digital Publishing Institute
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4295927810
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W4295927810
+ER  - 

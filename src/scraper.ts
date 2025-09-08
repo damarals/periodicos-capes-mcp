@@ -53,7 +53,7 @@ export class CAPESScraper {
 
       return await response.text();
     } catch (error) {
-      // Adiciona mais contexto ao erro para facilitar a depuração.
+      console.error(`❌ ScrapingAnt failed for ${targetUrl}:`, error instanceof Error ? error.message : String(error));
       throw new Error(`Failed to fetch from ScrapingAnt for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
@@ -234,7 +234,7 @@ export class CAPESScraper {
                          $('#item-resumo').text().trim() || undefined;
 
       // CORRECTED: ISSN with direct selector
-      const issnElement = $('strong:contains("ISSN")').next('p.text-muted.mb-3.block');
+      const issnElement = $('strong').filter((i, el) => $(el).text().trim() === 'ISSN').next('p.text-muted.mb-3.block');
       metadata.issn = issnElement.text().trim() || undefined;
 
       // CORRECTED: Publisher with direct ID selector
@@ -260,7 +260,7 @@ export class CAPESScraper {
 
       // CORRECTED: DOI from first paragraph with specific class
       const doiText = $('p.small.text-muted.mb-3.block').first().text().trim();
-      if (doiText && doiText.startsWith('10.')) {
+      if (doiText && doiText.match(/10\.\d{4,}/)) {
         const doiMatch = doiText.match(/(10\.\d{4,}\/[^\s]+)/);
         metadata.doi = doiMatch ? doiMatch[1] : undefined;
       }
@@ -285,7 +285,7 @@ export class CAPESScraper {
 
       return metadata;
     } catch (error) {
-      console.error(`Failed to scrape article details for ${articleId}:`, error instanceof Error ? error.message : String(error));
+      console.error(`❌ Failed to scrape article details for ${articleId}:`, error instanceof Error ? error.message : String(error));
       return {};
     }
   }
@@ -316,7 +316,7 @@ export class CAPESScraper {
       // Process remaining pages in parallel if needed
       if (totalPages > 1) {
         const pagePromises: Promise<BasicArticleInfo[]>[] = [];
-        const maxWorkers = 2; // Reduced concurrency to be respectful to ScrapingAnt
+        const maxWorkers = 1; // ScrapingAnt free plan allows only 1 concurrent request
         
         for (let page = 2; page <= totalPages; page++) {
           const pagePromise = this.fetchPage(searchTerm, theme, page, options);
@@ -363,7 +363,7 @@ export class CAPESScraper {
     articleListings: BasicArticleInfo[],
     options: SearchOptions
   ): Promise<Article[]> {
-    const maxWorkers = 2; // Reduced concurrency to be respectful to ScrapingAnt
+    const maxWorkers = 1; // ScrapingAnt free plan allows only 1 concurrent request
     const articles: Article[] = [];
 
     const processArticle = async (listing: BasicArticleInfo): Promise<Article | null> => {
@@ -376,16 +376,17 @@ export class CAPESScraper {
 
         const article: Article = {
           title: listing.title,
-          authors: details.authors || [],
           search_term: listing.theme,
           article_id: listing.article_id,
           detail_url: listing.detail_url,
           journal: listing.journal,
           publisher: listing.publisher,
           document_type: listing.document_type,
+          ...details, // Apply details first
+          // Then override with fallbacks to ensure no undefined values
+          authors: details.authors || [],
           is_open_access: details.is_open_access || false,
           is_peer_reviewed: details.is_peer_reviewed || false,
-          ...details,
         };
 
 
@@ -706,7 +707,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.2.2",
+        tool_version: "4.2.3",
         export_timestamp: timestamp
       },
       export_info: {
@@ -810,7 +811,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.2.2",
+        tool_version: "4.2.3",
         export_timestamp: timestamp
       },
       export_info: {

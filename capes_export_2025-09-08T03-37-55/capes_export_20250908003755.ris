@@ -1,0 +1,156 @@
+TY  - JOUR
+TI  - Respiratory hospitalizations and wildfire smoke: a spatiotemporal analysis of an extreme firestorm in San Diego County, California
+AU  - Rosana Aguilera
+AU  - Kristen Hansen
+AU  - Alexander Gershunov
+AU  - Sindana D. Ilango
+AU  - Paige Sheridan
+AU  - Tarik Benmarhnia
+PY  - 2020
+T2  - Environmental Epidemiology
+JF  - Environmental Epidemiology
+VL  - 4
+IS  - 5
+AB  - Background: Wildfire smoke adversely impacts respiratory health as fine particles can penetrate deeply into the lungs. Epidemiological studies of differential impacts typically target population subgroups in terms of vulnerability to wildfire smoke. Such information is useful to customize smoke warnings and mitigation actions for specific groups of individuals. In addition to individual vulnerability, it is also important to assess spatial patterns of health impacts to identify vulnerable communities and tailor public health actions during wildfire smoke events. Methods: We assess the spatiotemporal variation in respiratory hospitalizations in San Diego County during a set of major wildfires in 2007, which led to a substantial public health burden. We propose a spatial within-community matched design analysis, adapted to the study of wildfire impacts, coupled with a Bayesian Hierarchical Model, that explicitly considers the spatial variation of respiratory health associated with smoke exposure, compared to reference periods before and after wildfires. We estimate the signal-to-noise ratio to ultimately gauge the precision of the Bayesian model output. Results: We find the highest excess hospitalizations in areas covered by smoke, mainly ZIP codes contained by and immediately downwind of wildfire perimeters, and that excess hospitalizations tend to follow the distribution of smoke plumes across space (ZIP codes) and time (days). Conclusions: Analyzing the spatiotemporal evolution of exposure to wildfire smoke is necessary due to variations in smoke plume extent, particularly in this region where the most damaging wildfires are associated with strong wind conditions.
+DO  - 10.1097/ee9.0000000000000114
+SN  - 2474-7882
+PB  - Wolters Kluwer
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3090353914
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W3090353914
+ER  - 
+
+TY  - JOUR
+TI  - Bayesian mitigation of spatial coarsening for a Hawkes model applied to gunfire, wildfire and viral contagion
+T2  - The Annals of Applied Statistics
+JF  - The Annals of Applied Statistics
+PB  - Institute of Mathematical Statistics
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3182907019
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W3182907019
+ER  - 
+
+TY  - JOUR
+TI  - Optimized stratification approach enhances the weight-of-evidence method: Transparently uncovering wildfire probability and drivers-wildfire relationships in the southwest mountains of China
+T2  - Ecological Indicators
+JF  - Ecological Indicators
+PB  - Elsevier BV
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4390379337
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4390379337
+ER  - 
+
+TY  - JOUR
+TI  - Spatial Heterogeneity of the Respiratory Health Impacts of Wildfire Smoke PM 2.5  in California
+AU  - Viet Do
+AU  - Chen Chen
+AU  - Tarik Benmarhnia
+AU  - Joan A. Casey
+PY  - 2024
+T2  - GeoHealth
+JF  - GeoHealth
+VL  - 8
+IS  - 4
+AB  - Abstract Wildfire smoke fine particles (PM 2.5 ) are a growing public health threat as wildfire events become more common and intense under climate change, especially in the Western United States. Studies assessing the association between wildfire PM 2.5 exposure and health typically summarize the effects over the study area. However, health responses to wildfire PM 2.5 may vary spatially. We evaluated spatially‐varying respiratory acute care utilization risks associated with short‐term exposure to wildfire PM 2.5 and explored community characteristics possibly driving spatial heterogeneity. Using ensemble‐modeled daily wildfire PM 2.5 , we defined a wildfire smoke day to have wildfire‐specific PM 2.5 concentration ≥15 μg/m 3 . We included daily respiratory emergency department visits and unplanned hospitalizations in 1,396 California ZIP Code Tabulation Areas (ZCTAs) and 15 census‐derived community characteristics. Employing a case‐crossover design and conditional logistic regression, we observed increased odds of respiratory acute care utilization on wildfire smoke days at the state level (odds ratio [OR] = 1.06, 95% confidence interval [CI]: 1.05, 1.07). Across air basins, ORs ranged from 0.88 to 1.57, with the highest effect estimate in San Diego. A within‐community matching design and spatial Bayesian hierarchical model also revealed spatial heterogeneity in ZCTA‐level rate differences. For example, communities with a higher percentage of Black or Pacific Islander residents had stronger wildfire PM 2.5 ‐outcome relationships, while more air conditioning and tree canopy attenuated associations. We found an important heterogeneity in wildfire smoke‐related health impacts across air basins, counties, and ZCTAs, and we identified characteristics of vulnerable communities, providing evidence to guide policy development and resource allocation.
+DO  - 10.1029/2023gh000997
+SN  - 2471-1403
+PB  - Wiley
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4393314653
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W4393314653
+ER  - 
+
+TY  - JOUR
+TI  - A combined statistical and machine learning approach for spatial prediction of extreme wildfire frequencies and sizes
+T2  - Extremes
+JF  - Extremes
+PB  - Springer Science+Business Media
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4321437682
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4321437682
+ER  - 
+
+TY  - JOUR
+TI  - A spatial causal analysis of wildland fire-contributed PM2.5 using numerical model output
+AU  - Alexandra Larsen
+AU  - Shu Yang
+AU  - Brian J. Reich
+AU  - Ana G. Rappold
+PY  - 2022
+T2  - The Annals of Applied Statistics
+JF  - The Annals of Applied Statistics
+VL  - 16
+IS  - 4
+AB  - Wildland fire smoke contains hazardous levels of fine particulate matter (PM2.5), a pollutant shown to adversely effect health. Estimating fire attributable PM2.5 concentrations is key to quantifying the impact on air quality and subsequent health burden. This is a challenging problem since only total PM2.5 is measured at monitoring stations and both fire-attributable PM2.5 and PM2.5 from all other sources are correlated in space and time. We propose a framework for estimating fire-contributed PM2.5 and PM2.5 from all other sources using a novel causal inference framework and bias-adjusted chemical model representations of PM2.5 under counterfactual scenarios. The chemical model representation of PM2.5 for this analysis is simulated using Community Multiscale Air Quality Modeling System (CMAQ), run with and without fire emissions across the contiguous U.S. for the 2008–2012 wildfire seasons. The CMAQ output is calibrated with observations from monitoring sites for the same spatial domain and time period. We use a Bayesian model that accounts for spatial variation to estimate the effect of wildland fires on PM2.5 and state assumptions under which the estimate has a valid causal interpretation. Our results include estimates of the contributions of wildfire smoke to PM2.5 for the contiguous U.S. Additionally, we compute the health burden associated with the PM2.5 attributable to wildfire smoke.
+DO  - 10.1214/22-aoas1610
+SN  - 1941-7330
+PB  - Institute of Mathematical Statistics
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3012162383
+KW  - bayesian wildfire spatial
+N1  - Open Access; Peer Reviewed; CAPES ID: W3012162383
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire Risk Assessment for Strategic Forest Management in the Southern United States: A Bayesian Network Modeling Approach
+T2  - Land
+JF  - Land
+PB  - Multidisciplinary Digital Publishing Institute
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4389919031
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4389919031
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire and spruce beetle outbreak have mixed effects on below‐canopy temperatures in a Rocky Mountain subalpine forest
+AU  - Amanda R. Carlson
+AU  - Jason S. Sibold
+AU  - José F. Negrón
+PY  - 2020
+T2  - Journal of Biogeography
+JF  - Journal of Biogeography
+VL  - 48
+IS  - 1
+AB  - Abstract Aim Fine‐scale topography and canopy cover can play an important role in mediating effects of regional‐scale climate change on the below‐canopy environment in mountain forests. The aim of this study was to determine how below‐canopy temperatures in a high‐elevation Rocky Mountain forest have been affected by canopy change resulting from severe wildfire and spruce beetle outbreak within the last 10–15 years. Location Eastern San Juan Mountains, Colorado, USA. Taxon Picea engelmannii , Abies lasiocarpa , Dendroctonus rufipennis . Methods We used a network of sensors to record temperatures for a full year in burned and beetle‐impacted areas. Using a Bayesian model that accounted for spatial structure in temperatures, we derived covariate parameters to determine the relative influence of topographic variables (elevation, aspect, slope, topographic position and solar radiation), live tree basal area and burned/unburned status on average daily maximum and minimum temperatures (Tmax, Tmin) in summer and winter. Results Model parameters indicated that burned areas were warmer than unburned forest, with three of four average temperature variables (summer Tmax, winter Tmax, and winter Tmin) having &gt;95% likelihood of a positive temperature difference in burned versus unburned locations. Mean temperature changes for these variables ranged from 0.41 to 0.74°C. Conversely, canopy loss in unburned, beetle‐killed forests did not meaningfully affect Tmax but resulted in slight cooling of Tmin. Modelled temperature changes resulting from 100% overstorey mortality were −1.29°C for summer Tmin (95% credible interval: −0.027 to −2.56°C) and −1.31°C for winter Tmin (95% credible interval: 0.17 to −2.79°C). Main Conclusions Our results indicate that severe wildfire may exacerbate effects of climate change and increase the probability of ecosystem transitions. However, the effects of bark beetle outbreaks are more complex. Cooling of overnight minimum temperatures may counteract warming trends, but an increase in diurnal temperature ranges may have uncertain ecological consequences.
+DO  - 10.1111/jbi.13994
+SN  - 1365-2699
+PB  - Wiley
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W3094626469
+KW  - bayesian wildfire spatial
+N1  - Peer Reviewed; CAPES ID: W3094626469
+ER  - 
+
+TY  - JOUR
+TI  - Drought-related wildfire accounts for one-third of the forest wildfires in subtropical China
+AU  - Jianpeng Yin
+AU  - Binbin He
+AU  - Chunquan Fan
+AU  - Rui Chen
+AU  - Hongguo Zhang
+AU  - Yiru Zhang
+PY  - 2024
+T2  - Agricultural and Forest Meteorology
+JF  - Agricultural and Forest Meteorology
+VL  - 346
+AB  - The threat of wildfires to human safety and ecosystem services is widely known to increase due to climate change characterized by drought. In subtropical China, seasonal drought during the non-monsoon period contributes to increase of fire risk. However, both the relationship between drought and wildfire and the extent of drought effect are poorly understood. Based on satellite active fire detections and monthly drought metrics, we quantified the impact of drought on forest wildfire frequency in subtropical China during 2001–2020, using a Bayesian hierarchical modelling framework. We observed excess wildfire, defined here as above normal wildfire activity level, is significantly correlated to drought across subtropical China, and drought-wildfire relationship showed threshold behavior that the probability of excess wildfire increased significantly when the vapor pressure deficit (VPD) crossed 0.24 standard deviations of its long-term average. From 2001 to 2020, excess wildfire caused by drought accounted for approximately 31 % of the total number of forest fire points during the fire season (November to May). The drought-related excess wildfire was concentrated in 2007–2010 and 2014, and their spatial distribution showed a dipole between the western and eastern subtropical China in individual years. Moreover, we evaluated the spatiotemporal sensitivity of wildfire to drought by Bayesian model coefficients. There was higher sensitivity than average level of the entire region in 54 % of subtropical China, especially in northwestern Yunnan. Our results indicate that drought plays a dominant role on wildfire regime at the regional scale in subtropical China. As the drying trend intensifies in the future, wildfires will show different patterns due to the large differences in the sensitivity of wildfire to drought in subtropical China.
+DO  - 10.1016/j.agrformet.2024.109893
+SN  - 1873-2240
+PB  - Elsevier BV
+LA  - Inglês
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4390927801
+KW  - bayesian wildfire spatial
+N1  - Peer Reviewed; CAPES ID: W4390927801
+ER  - 
+
+TY  - JOUR
+TI  - Wildfire Risk Assessment in Liangshan Prefecture, China Based on An Integration Machine Learning Algorithm
+T2  - Remote Sensing
+JF  - Remote Sensing
+PB  - Multidisciplinary Digital Publishing Institute
+UR  - https://www.periodicos.capes.gov.br/index.php/acervo/buscador.html?task=detalhes&source=all&id=W4295927810
+KW  - bayesian wildfire spatial
+N1  - CAPES ID: W4295927810
+ER  - 
