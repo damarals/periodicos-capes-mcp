@@ -20,7 +20,7 @@ class CAPESMCPServer {
     this.server = new Server(
       {
         name: 'periodicos-capes-mcp',
-        version: '4.3.5',
+        version: '4.4.5',
       },
       {
         capabilities: {
@@ -149,6 +149,13 @@ class CAPESMCPServer {
                   description: 'Maximum number of articles to export',
                   minimum: 1,
                   maximum: 10000
+                },
+                max_workers: {
+                  type: 'number',
+                  description: 'Maximum number of concurrent workers for scraping (1-25, default: 4). Consider Zyte API limits: Standard plan 750 RPM allows ~25 concurrent requests with 2s avg response time.',
+                  minimum: 1,
+                  maximum: 25,
+                  default: 4
                 }
               },
               required: ['query', 'format'],
@@ -193,13 +200,14 @@ class CAPESMCPServer {
           const format = args.format as ExportFormat;
           const filters = args.filters as SearchFilters | undefined;
           const maxResults = args.max_results as number | undefined;
+          const maxWorkers = args.max_workers as number | undefined;
 
           // Validate format
           if (format !== 'ris' && format !== 'bibtex') {
             throw new McpError(ErrorCode.InvalidParams, 'Format must be either "ris" or "bibtex"');
           }
 
-          const result = await this.scraper.searchArticles(query, format, filters, maxResults);
+          const result = await this.scraper.searchArticles(query, format, filters, maxResults, maxWorkers);
 
           return {
             content: [

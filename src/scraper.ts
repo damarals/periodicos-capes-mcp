@@ -303,7 +303,8 @@ export class CAPESScraper {
   private async getListingsForTerm(
     searchTerm: string, 
     theme: string, 
-    options: SearchOptions
+    options: SearchOptions,
+    maxWorkers?: number
   ): Promise<BasicArticleInfo[]> {
     const listings: BasicArticleInfo[] = [];
     const url = this.constructSearchUrl(searchTerm, options, 1);
@@ -326,14 +327,14 @@ export class CAPESScraper {
       // Process remaining pages in parallel if needed
       if (totalPages > 1) {
         const pagePromises: Promise<BasicArticleInfo[]>[] = [];
-        const maxWorkers = 4; // Zyte optimal concurrency for performance
+        const workers = maxWorkers || 4; // Use provided workers or default to 4
         
         for (let page = 2; page <= totalPages; page++) {
           const pagePromise = this.fetchPage(searchTerm, theme, page, options);
           pagePromises.push(pagePromise);
 
           // Process in batches to respect max_workers
-          if (pagePromises.length >= maxWorkers || page === totalPages) {
+          if (pagePromises.length >= workers || page === totalPages) {
             const batchResults = await Promise.all(pagePromises);
             batchResults.forEach(pageResults => listings.push(...pageResults));
             pagePromises.length = 0;
@@ -371,9 +372,10 @@ export class CAPESScraper {
 
   private async fetchArticleDetails(
     articleListings: BasicArticleInfo[],
-    options: SearchOptions
+    options: SearchOptions,
+    maxWorkers?: number
   ): Promise<Article[]> {
-    const maxWorkers = 4; // Zyte optimal concurrency for performance
+    const workers = maxWorkers || 4; // Use provided workers or default to 4
     const articles: Article[] = [];
 
     const processArticle = async (listing: BasicArticleInfo): Promise<Article | null> => {
@@ -408,8 +410,8 @@ export class CAPESScraper {
     };
 
     // Process articles in batches to respect max_workers
-    for (let i = 0; i < articleListings.length; i += maxWorkers) {
-      const batch = articleListings.slice(i, i + maxWorkers);
+    for (let i = 0; i < articleListings.length; i += workers) {
+      const batch = articleListings.slice(i, i + workers);
       const batchPromises = batch.map(processArticle);
       const batchResults = await Promise.all(batchPromises);
       
@@ -490,13 +492,14 @@ export class CAPESScraper {
     }
   }
 
-  async search(options: SearchOptions): Promise<SearchResult> {
+  async search(options: SearchOptions, maxWorkers?: number): Promise<SearchResult> {
     
     // Phase 1: Get all article listings
     const articleListings = await this.getListingsForTerm(
       options.query, 
       options.query, // Use query as theme for consistency
-      options
+      options,
+      maxWorkers
     );
 
 
@@ -510,7 +513,7 @@ export class CAPESScraper {
 
     if (options.full_details) {
       // Phase 2: Fetch detailed metadata (only for limited set)
-      articles = await this.fetchArticleDetails(limitedListings, options);
+      articles = await this.fetchArticleDetails(limitedListings, options, maxWorkers);
     } else {
       // Convert basic listings to Article objects without detailed metadata
       articles = limitedListings.map(listing => ({
@@ -665,7 +668,8 @@ export class CAPESScraper {
     query: string,
     format: ExportFormat,
     filters?: SearchFilters,
-    maxResults?: number
+    maxResults?: number,
+    maxWorkers?: number
   ): Promise<ExportResult> {
     // First get all articles
     const options = this.convertFiltersToOptions(query, filters);
@@ -677,7 +681,7 @@ export class CAPESScraper {
     }
 
     // Use the existing search function to get all articles
-    const searchResult = await this.search(options);
+    const searchResult = await this.search(options, maxWorkers);
     
     if (!searchResult.articles || searchResult.articles.length === 0) {
       throw new Error('No articles found for export');
@@ -717,7 +721,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.3.5",
+        tool_version: "4.4.5",
         export_timestamp: timestamp
       },
       export_info: {
@@ -766,7 +770,8 @@ export class CAPESScraper {
     query: string,
     format: ExportFormat,
     filters?: SearchFilters,
-    maxResults?: number
+    maxResults?: number,
+    maxWorkers?: number
   ): Promise<SearchArticlesResult> {
     // Step 1: Get preview for the search summary (5 articles sample)
     const previewResult = await this.searchPreview(query, filters);
@@ -780,8 +785,8 @@ export class CAPESScraper {
       options.max_results = maxResults;
     }
 
-    // Use the existing search function to get all articles
-    const searchResult = await this.search(options);
+    // Use the existing search function to get all articles with custom workers
+    const searchResult = await this.search(options, maxWorkers);
     
     if (!searchResult.articles || searchResult.articles.length === 0) {
       throw new Error('No articles found for export');
@@ -821,7 +826,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.3.5",
+        tool_version: "4.4.5",
         export_timestamp: timestamp
       },
       export_info: {
