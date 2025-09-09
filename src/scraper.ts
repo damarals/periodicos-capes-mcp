@@ -32,11 +32,12 @@ export class CAPESScraper {
   }
 
   /**
-   * Fetches HTML content using the Zyte API to bypass anti-bot measures.
+   * Fetches HTML content using the Zyte API with automatic retry for HTTP 520 errors.
    * @param targetUrl The URL of the CAPES portal page to scrape.
+   * @param maxRetries Maximum number of retries for 520 errors (default: 3)
    * @returns A promise that resolves to the HTML content of the page.
    */
-  private async _fetchWithZyte(targetUrl: string): Promise<string> {
+  private async _fetchWithZyte(targetUrl: string, maxRetries: number = 3): Promise<string> {
     if (!this.zyteApiKey) {
       throw new Error("ZYTE_API_KEY environment variable is required. Please set it in your .env file.");
     }
@@ -46,26 +47,87 @@ export class CAPESScraper {
       httpResponseBody: true
     };
 
-    try {
-      const response = await fetch('https://api.zyte.com/v1/extract', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${Buffer.from(this.zyteApiKey + ':').toString('base64')}`
-        },
-        body: JSON.stringify(request)
-      });
+    for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+      try {
+        const response = await fetch('https://api.zyte.com/v1/extract', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${Buffer.from(this.zyteApiKey + ':').toString('base64')}`
+          },
+          body: JSON.stringify(request)
+        });
 
-      if (!response.ok) {
-        throw new Error(`Zyte API error: ${response.status} ${response.statusText}`);
+        // Handle HTTP 520 (temporary ban) - retry with backoff
+        if (response.status === 520) {
+          if (attempt <= maxRetries) {
+            const backoffMs = Math.min(1000 * Math.pow(2, attempt - 1), 30000); // Exponential backoff, max 30s
+            const logInfo = this.getLogInfo(targetUrl);
+            console.warn(`⏳ HTTP 520 (temporary ban) - Retry ${attempt}/${maxRetries} after ${backoffMs}ms - ${logInfo}`);
+            await this.sleep(backoffMs);
+            continue;
+          } else {
+            throw new Error(`Zyte API persistent 520 error after ${maxRetries} retries: ${response.statusText}`);
+          }
+        }
+
+        if (!response.ok) {
+          throw new Error(`Zyte API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return Buffer.from(data.httpResponseBody, 'base64').toString('utf-8');
+        
+      } catch (error) {
+        // If it's our last attempt, throw the error
+        if (attempt > maxRetries) {
+          console.error(`❌ Zyte failed permanently for ${targetUrl}:`, error instanceof Error ? error.message : String(error));
+          throw new Error(`Failed to fetch from Zyte for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        
+        // For network errors or other issues, also retry with backoff
+        if (!(error instanceof Error) || !error.message.includes('520')) {
+          const backoffMs = Math.min(1000 * Math.pow(2, attempt - 1), 30000);
+          const logInfo = this.getLogInfo(targetUrl);
+          console.warn(`⏳ Network error - Retry ${attempt}/${maxRetries} after ${backoffMs}ms - ${logInfo}`);
+          await this.sleep(backoffMs);
+        }
       }
-
-      const data = await response.json();
-      return Buffer.from(data.httpResponseBody, 'base64').toString('utf-8');
-    } catch (error) {
-      console.error(`❌ Zyte failed for ${targetUrl}:`, error instanceof Error ? error.message : String(error));
-      throw new Error(`Failed to fetch from Zyte for URL ${targetUrl}: ${error instanceof Error ? error.message : String(error)}`);
     }
+
+    // This should never be reached, but TypeScript requires it
+    throw new Error(`Unexpected error in _fetchWithZyte for ${targetUrl}`);
+  }
+
+  /**
+   * Sleep utility for retry delays
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Extract clean info from URL for logging
+   */
+  private getLogInfo(url: string): string {
+    // Check for article details page
+    const articleMatch = url.match(/id=([A-Z0-9]+)/);
+    if (articleMatch) {
+      return `Article ${articleMatch[1]} (details)`;
+    }
+    
+    // Check for search page
+    const pageMatch = url.match(/page=(\d+)/);
+    if (pageMatch) {
+      return `Page ${pageMatch[1]} (search)`;
+    }
+    
+    // Default to search page 1
+    if (url.includes('buscador.html')) {
+      return 'Page 1 (search)';
+    }
+    
+    return 'Unknown page';
   }
 
   private constructSearchUrl(searchTerm: string, options: SearchOptions, page: number = 1): string {
@@ -721,7 +783,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.4.5",
+        tool_version: "4.4.6",
         export_timestamp: timestamp
       },
       export_info: {
@@ -826,7 +888,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.4.5",
+        tool_version: "4.4.6",
         export_timestamp: timestamp
       },
       export_info: {
