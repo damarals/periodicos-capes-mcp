@@ -363,8 +363,8 @@ export class CAPESScraper {
   }
 
   private async getListingsForTerm(
-    searchTerm: string, 
-    theme: string, 
+    searchTerm: string,
+    theme: string,
     options: SearchOptions,
     maxWorkers?: number
   ): Promise<BasicArticleInfo[]> {
@@ -381,16 +381,27 @@ export class CAPESScraper {
         totalPages = Math.min(totalPages, options.max_pages);
       }
 
+      // Calculate pages needed based on max_results (30 items per page)
+      if (options.max_results && options.max_results > 0) {
+        const itemsPerPage = 30;
+        const pagesNeeded = Math.ceil(options.max_results / itemsPerPage);
+        totalPages = Math.min(totalPages, pagesNeeded);
+      }
+
       // Process first page
       const pageListings = this.extractBasicArticleInfo($, theme, searchTerm);
       listings.push(...pageListings);
-      
+
+      // Early return if we already have enough results
+      if (options.max_results && listings.length >= options.max_results) {
+        return listings.slice(0, options.max_results);
+      }
 
       // Process remaining pages in parallel if needed
       if (totalPages > 1) {
         const pagePromises: Promise<BasicArticleInfo[]>[] = [];
         const workers = maxWorkers || 4; // Use provided workers or default to 4
-        
+
         for (let page = 2; page <= totalPages; page++) {
           const pagePromise = this.fetchPage(searchTerm, theme, page, options);
           pagePromises.push(pagePromise);
@@ -400,6 +411,11 @@ export class CAPESScraper {
             const batchResults = await Promise.all(pagePromises);
             batchResults.forEach(pageResults => listings.push(...pageResults));
             pagePromises.length = 0;
+
+            // Early return if we already have enough results
+            if (options.max_results && listings.length >= options.max_results) {
+              return listings.slice(0, options.max_results);
+            }
           }
         }
       }
@@ -783,7 +799,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.4.6",
+        tool_version: "4.4.7",
         export_timestamp: timestamp
       },
       export_info: {
@@ -888,7 +904,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.4.6",
+        tool_version: "4.4.7",
         export_timestamp: timestamp
       },
       export_info: {
