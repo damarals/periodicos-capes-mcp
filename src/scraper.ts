@@ -132,7 +132,31 @@ export class CAPESScraper {
 
   private constructSearchUrl(searchTerm: string, options: SearchOptions, page: number = 1): string {
     // Encode search term with parentheses and spaces as expected by portal
-    const searchQuery = options.advanced ? `all:contains(${searchTerm})` : searchTerm;
+    let searchQuery: string;
+
+    if (options.advanced) {
+      // Parse boolean query and wrap each term in all:contains()
+      // Split by boolean operators while preserving them
+      searchQuery = searchTerm
+        .split(/\b(AND|OR|NOT)\b/gi)
+        .map(part => {
+          const trimmed = part.trim();
+          // If it's a boolean operator, keep it uppercase
+          if (/^(AND|OR|NOT)$/i.test(trimmed)) {
+            return trimmed.toUpperCase();
+          }
+          // If it's a term, wrap it in all:contains()
+          if (trimmed.length > 0) {
+            return `all:contains(${trimmed})`;
+          }
+          return '';
+        })
+        .filter(part => part.length > 0)
+        .join(' ');
+    } else {
+      searchQuery = searchTerm;
+    }
+
     const encodedTerm = encodeURIComponent(searchQuery).replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/%20/g, '+');
     
     let url = `${CAPESScraper.BASE_URL}?q=${encodedTerm}`;
@@ -799,7 +823,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.4.7",
+        tool_version: "4.5.0",
         export_timestamp: timestamp
       },
       export_info: {
@@ -904,7 +928,7 @@ export class CAPESScraper {
         filters_applied: filters,
         format,
         capes_portal_info: "Portal de Periódicos CAPES (IEEE, ACM, Elsevier, WoS, Scopus, etc.)",
-        tool_version: "4.4.7",
+        tool_version: "4.5.0",
         export_timestamp: timestamp
       },
       export_info: {
